@@ -1,0 +1,128 @@
+plugins {
+    id "java"
+    id "edu.wpi.first.GradleRIO" version "2021.2.2"
+}
+
+repositories {
+    maven {
+        name = "GitHubPackages"
+        url = "https://maven.pkg.github.com/frc-862/lightning"
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+def ROBOT_MAIN_CLASS = "frc.robot.Main"
+
+deploy {
+    targets {
+        roboRIO("roborio") {
+            team = frc.getTeamNumber()
+        }
+    }
+    artifacts {
+        frcJavaArtifact('frcJava') {
+            targets << "roborio"
+            debug = frc.getDebugOrDefault(false)
+        }
+        fileTreeArtifact('frcStaticFileDeploy') {
+            files = fileTree(dir: 'src/main/deploy')
+            targets << "roborio"
+            directory = '/home/lvuser/deploy'
+        }
+    }
+}
+
+tasks.register("update_version") {
+  def versionPropsFile = file('src/main/resources/version.properties')
+  def versionBuild
+  def gitHash
+
+  def getGitHash = { ->
+      def stdout = new ByteArrayOutputStream()
+      exec {
+          commandLine 'git', 'rev-parse', 'HEAD'
+          standardOutput = stdout
+      }
+      return stdout.toString().trim()
+  }
+
+  def getGitBranch = { ->
+      def stdout = new ByteArrayOutputStream()
+      exec {
+          commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+          standardOutput = stdout
+      }
+      return stdout.toString().trim()
+  }
+
+  def getGitStatus = { ->
+      def stdout = new ByteArrayOutputStream()
+      exec {
+          commandLine 'git', 'status'
+          standardOutput = stdout
+      }
+      return stdout.toString().trim()
+  }
+
+  doLast {
+	mkdir("src/main/resources")
+        ant.touch(file:"src/main/resources/version.properties")
+        if (versionPropsFile.canRead()) {
+            def Properties versionProps = new Properties()
+            versionProps.load(new FileInputStream(versionPropsFile))
+            if (versionProps['VERSION_BUILD'] == null) {
+                versionBuild = 1
+            } else {
+                versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+            }
+            versionProps['VERSION_BUILD'] = versionBuild.toString()
+
+            gitHash = getGitHash()
+            versionProps['GIT_HASH'] = gitHash
+            versionProps['GIT_BRANCH'] = getGitBranch()
+            versionProps['BUILD_TIME'] = (new Date()).toString()
+            versionProps['BUILD_STATUS'] = getGitStatus()
+
+            versionProps.store(versionPropsFile.newWriter(), null)
+        } else {
+            throw new FileNotFoundException("Could not read version.properties!")
+        }
+  }
+}
+
+tasks.named("deploy") {
+  dependsOn("update_version")
+}
+
+def includeDesktopSupport = false
+
+dependencies {
+    implementation wpi.deps.wpilib()
+    nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
+    implementation wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:3.2.4'
+    simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+    simulation wpi.deps.sim.driverstation(wpi.platforms.desktop, false)
+    implementation 'frc:lightning:0.0.0-beta1'
+}
+
+// Simulation configuration (e.g. environment variables).
+sim {
+    // Sets the websocket client remote host.
+    // envVar "HALSIMWS_HOST", "10.0.0.2"
+}
+
+jar {
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
