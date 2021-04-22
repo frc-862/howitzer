@@ -85,4 +85,8 @@ public class SwerveModule {
 
     }
 
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(driveMotor.getSelectedSensorPosition(), new Rotation2d(canCoder.getAbsolutePosition()));
+    }
+
 }
