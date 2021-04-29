@@ -7,14 +7,13 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class moduleControl extends CommandBase {
+public class ModuleControl extends CommandBase {
 
     private SwerveModule module;
     private SwerveModuleState state;
     private Drivetrain drivetrain;
     private ModuleNumber moduleNumber;
     private double speed;
-    private Rotation2d angle;
 
     public enum ModuleNumber {
         FRONT_LEFT_MOTOR(0),
@@ -30,10 +29,9 @@ public class moduleControl extends CommandBase {
         }
     }
 
-    public moduleControl(Drivetrain drivetrain, ModuleNumber moduleNumber, double speed, Rotation2d angle) {
+    public ModuleControl(Drivetrain drivetrain, ModuleNumber moduleNumber, double speed) {
         this.drivetrain = drivetrain;
         this.speed = speed;
-        this.angle = angle;
         addRequirements(drivetrain);
     }
 
@@ -41,7 +39,7 @@ public class moduleControl extends CommandBase {
     @Override
     public void initialize() {
         module = drivetrain.modules[moduleNumber.getValue()];
-        state = new SwerveModuleState(speed, angle);
+        state = new SwerveModuleState(speed, module.getAngle().plus(Rotation2d.fromDegrees(180)));
     }
 
     // Called every time the scheduler runs while the command is scheduled.
