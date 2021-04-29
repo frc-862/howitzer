@@ -32,7 +32,7 @@ public class Drivetrain extends SubsystemBase {
 
     // TODO: Update these CAN device IDs to match your TalonFX + CANCoder device IDs
     // TODO: Update module offsets to match your CANCoder offsets
-    private SwerveModule[] modules = new SwerveModule[] {
+    public final SwerveModule[] modules = new SwerveModule[] {
         new SwerveModule(new TalonFX(RobotMap.FRONT_LEFT_DRIVE_MOTOR),  new TalonFX(RobotMap.FRONT_LEFT_ANGLE_MOTOR),  new CANCoder(RobotMap.FRONT_LEFT_CANCODER),  Rotation2d.fromDegrees(0)), // Front Left
         new SwerveModule(new TalonFX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR), new TalonFX(RobotMap.FRONT_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_RIGHT_CANCODER), Rotation2d.fromDegrees(0)), // Front Right
         new SwerveModule(new TalonFX(RobotMap.BACK_LEFT_DRIVE_MOTOR),   new TalonFX(RobotMap.BACK_LEFT_ANGLE_MOTOR),   new CANCoder(RobotMap.BACK_LEFT_CANCODER),   Rotation2d.fromDegrees(0)), // Back Left
@@ -44,6 +44,14 @@ public class Drivetrain extends SubsystemBase {
 
     public Drivetrain() {
         imu.reset();
+    }
+
+    public void setModuleStates(SwerveModuleState[] states) {
+        for (int i = 0; i < states.length; i++) {
+            SwerveModule module = modules[i];
+            SwerveModuleState state = states[i];
+            module.setDesiredState(state);
+        }
     }
 
     /**
@@ -58,19 +66,7 @@ public class Drivetrain extends SubsystemBase {
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, imu.getHeading())
                         : new ChassisSpeeds(xSpeed, ySpeed, rot));
         SwerveDriveKinematics.normalizeWheelSpeeds(states, DrivetrainConstants.MAX_SPEED);
-        for (int i = 0; i < states.length; i++) {
-            SwerveModule module = modules[i];
-            SwerveModuleState state = states[i];
-            module.setDesiredState(state);
-        }
-    }
-
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DrivetrainConstants.MAX_SPEED);
-        modules[0].setDesiredState(desiredStates[0]);
-        modules[1].setDesiredState(desiredStates[1]);
-        modules[2].setDesiredState(desiredStates[2]);
-        modules[3].setDesiredState(desiredStates[3]);
+        setModuleStates(states);
     }
 
     public void updateOdometry() {
