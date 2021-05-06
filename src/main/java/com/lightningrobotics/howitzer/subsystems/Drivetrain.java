@@ -8,6 +8,7 @@ import com.lightningrobotics.howitzer.Constants.ModuleConstants;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
@@ -76,6 +77,16 @@ public class Drivetrain extends SubsystemBase {
             modules[1].getState(),
             modules[2].getState(),
             modules[3].getState());
+    }
+
+    public Pose2d getOdometryPose2d(){ 
+        updateOdometry();
+        return m_odometry.getPoseMeters();
+    }
+
+    public Rotation2d getOdometryRotation2d(){ 
+        updateOdometry();
+        return m_odometry.getPoseMeters().getRotation();
     }
 
     public SwerveDriveKinematics getKinematics(){

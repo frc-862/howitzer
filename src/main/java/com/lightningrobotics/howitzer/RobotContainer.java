@@ -1,17 +1,24 @@
 package com.lightningrobotics.howitzer;
 
+import java.util.Arrays;
+
 import com.lightningrobotics.howitzer.Constants.JoystickConstants;
 import com.lightningrobotics.howitzer.commands.ModuleControl;
 import com.lightningrobotics.howitzer.commands.SwerveDriveCommand;
 import com.lightningrobotics.howitzer.commands.ModuleControl.ModuleNumber;
+import com.lightningrobotics.howitzer.commands.auto.TestPathCommand;
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.lightning.LightningConfig;
 import frc.lightning.LightningContainer;
+import frc.lightning.auto.Autonomous;
 import frc.lightning.subsystems.LightningDrivetrain;
 
 public class RobotContainer extends LightningContainer {
@@ -20,8 +27,19 @@ public class RobotContainer extends LightningContainer {
 
     private final Drivetrain drivetrain = new Drivetrain();
 
+    private static SendableChooser<Command> chooser = new SendableChooser<>();
+
+    
+
     @Override
-    protected void configureAutonomousCommands() {}
+    protected void configureAutonomousCommands() 
+    {
+        Autonomous.register("Forward", new TestPathCommand().getCommand(drivetrain, 
+            Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d()))));
+
+        Autonomous.register("Backward", new TestPathCommand().getCommand(drivetrain, 
+            Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(-1d, 0d, new Rotation2d()))));
+    }
 
     @Override
     protected void configureButtonBindings() {}

@@ -5,6 +5,7 @@
 package com.lightningrobotics.howitzer.commands.auto;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
 
@@ -25,13 +26,13 @@ public class TestPathCommand extends CommandBase {
 
 	private static final Pose2d ZERO_POSE2D = new Pose2d(0d, 0d, Rotation2d.fromDegrees(0d));
 
-  	public SwerveControllerCommand getCommand(Drivetrain drivetrain) {
+  	public SwerveControllerCommand getCommand(Drivetrain drivetrain, List<Pose2d> coordinates) {
 		TrajectoryConfig config = new TrajectoryConfig(drivetrain.getMaxVelocity(), drivetrain.getMaxAcceleration());
 	
 		config.setKinematics(drivetrain.getKinematics());
 		config = config.setReversed(false);
 	
-		Trajectory trajectory = TrajectoryGenerator.generateTrajectory(Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d())), config);
+		Trajectory trajectory = TrajectoryGenerator.generateTrajectory(coordinates, config);
 	
 		// Translate to robot-relative trajectory
 		Transform2d transform = ZERO_POSE2D.minus(trajectory.getInitialPose());
@@ -39,12 +40,12 @@ public class TestPathCommand extends CommandBase {
 	
 		SwerveControllerCommand cmd = new SwerveControllerCommand(
 		    translatedTrajectory,
-		    () -> new Pose2d(),
+		    drivetrain::getOdometryPose2d,
 		    drivetrain.getKinematics(),
 		    drivetrain.getXPidController(),
 		    drivetrain.getYPidController(),
 		    drivetrain.getThetaPidController(),
-			() -> new Rotation2d(),
+			drivetrain::getOdometryRotation2d,
 			drivetrain::setModuleStates,
 		    drivetrain
 		);
@@ -52,6 +53,8 @@ public class TestPathCommand extends CommandBase {
 		return cmd;
 
 	}
+
+	
   /** Creates a new TestPathCommand. */
   public TestPathCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
