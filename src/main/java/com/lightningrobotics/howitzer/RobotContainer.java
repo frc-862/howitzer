@@ -25,7 +25,7 @@ public class RobotContainer extends LightningContainer {
     
     private final XboxController controller = new XboxController(JoystickConstants.DRIVER_CONTROLLER);
 
-    private final Drivetrain drivetrain = new Drivetrain();
+    private static final Drivetrain drivetrain = new Drivetrain();
 
     private static SendableChooser<Command> chooser = new SendableChooser<>();
 
