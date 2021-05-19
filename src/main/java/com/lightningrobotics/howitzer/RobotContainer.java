@@ -23,22 +23,20 @@ import frc.lightning.subsystems.LightningDrivetrain;
 
 public class RobotContainer extends LightningContainer {
     
-    private final XboxController controller = new XboxController(JoystickConstants.DRIVER_CONTROLLER);
+    private static final XboxController controller = new XboxController(JoystickConstants.DRIVER_CONTROLLER);
 
     private static final Drivetrain drivetrain = new Drivetrain();
-
-    private static SendableChooser<Command> chooser = new SendableChooser<>();
 
     
 
     @Override
     protected void configureAutonomousCommands() 
     {
-        Autonomous.register("Forward", new TestPathCommand().getCommand(drivetrain, 
-            Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d()))));
+        // Autonomous.register("Forward", new TestPathCommand().getCommand(drivetrain, 
+        //     Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d()))));
 
-        Autonomous.register("Backward", new TestPathCommand().getCommand(drivetrain, 
-            Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(-1d, 0d, new Rotation2d()))));
+        // Autonomous.register("Backward", new TestPathCommand().getCommand(drivetrain, 
+        //     Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(-1d, 0d, new Rotation2d()))));
     }
 
     @Override
@@ -65,16 +63,16 @@ public class RobotContainer extends LightningContainer {
     @Override
     protected void initializeDashboardCommands() {
         Shuffleboard.getTab("Module Controller").add("Front Left",
-            new ModuleControl(drivetrain, ModuleNumber.FRONT_LEFT_MOTOR, 0.2));
+            new ModuleControl(drivetrain, ModuleNumber.FRONT_LEFT_MOTOR, 0.15));
 
         Shuffleboard.getTab("Module Controller").add("Front Right",
-            new ModuleControl(drivetrain, ModuleNumber.FRONT_RIGHT_MOTOR, 0.2));
+            new ModuleControl(drivetrain, ModuleNumber.FRONT_RIGHT_MOTOR, 0.15));
 
         Shuffleboard.getTab("Module Controller").add("Back Left",
-            new ModuleControl(drivetrain, ModuleNumber.BACK_LEFT_MOTOR, 0.2));
+            new ModuleControl(drivetrain, ModuleNumber.BACK_LEFT_MOTOR, 0.15));
 
         Shuffleboard.getTab("Module Controller").add("Back Right",
-            new ModuleControl(drivetrain, ModuleNumber.BACK_RIGHT_MOTOR, 0.2));
+            new ModuleControl(drivetrain, ModuleNumber.BACK_RIGHT_MOTOR, 0.15));
     }
 
     @Override

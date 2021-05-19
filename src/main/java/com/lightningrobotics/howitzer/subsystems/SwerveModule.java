@@ -57,7 +57,8 @@ public class SwerveModule {
      * @return The relative rotational position of the angle motor in degrees
      */
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(canCoder.getAbsolutePosition());
+        return Rotation2d.fromDegrees(canCoder.getAbsolutePosition()); // Since encoder is in abs mode, this should get the absolute value
+                                                               // passing this to rotation should constrain to +/-180
     }
 
     /**

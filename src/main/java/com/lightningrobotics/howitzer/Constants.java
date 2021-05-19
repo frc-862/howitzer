@@ -6,19 +6,19 @@ import edu.wpi.first.wpilibj.util.Units;
 public class Constants {
 
     public static class RobotMap {
-        public static final int PIGEON = 9;
-        public static final int FRONT_LEFT_DRIVE_MOTOR = 1;
-        public static final int FRONT_LEFT_ANGLE_MOTOR = 2;
-        public static final int FRONT_LEFT_CANCODER = 0;
-        public static final int FRONT_RIGHT_DRIVE_MOTOR = 3;
-        public static final int FRONT_RIGHT_ANGLE_MOTOR = 4;
-        public static final int FRONT_RIGHT_CANCODER = 1;
-        public static final int BACK_LEFT_DRIVE_MOTOR = 5;
-        public static final int BACK_LEFT_ANGLE_MOTOR = 6;
-        public static final int BACK_LEFT_CANCODER = 2;
-        public static final int BACK_RIGHT_DRIVE_MOTOR = 7;
-        public static final int BACK_RIGHT_ANGLE_MOTOR = 8;
-        public static final int BACK_RIGHT_CANCODER = 3;
+        public static final int PIGEON = 19;
+        public static final int FRONT_LEFT_DRIVE_MOTOR = 8;
+        public static final int FRONT_LEFT_ANGLE_MOTOR = 7;
+        public static final int FRONT_LEFT_CANCODER = 16;
+        public static final int FRONT_RIGHT_DRIVE_MOTOR = 11;
+        public static final int FRONT_RIGHT_ANGLE_MOTOR = 12;
+        public static final int FRONT_RIGHT_CANCODER = 17;
+        public static final int BACK_LEFT_DRIVE_MOTOR = 10;
+        public static final int BACK_LEFT_ANGLE_MOTOR = 9;
+        public static final int BACK_LEFT_CANCODER = 15;
+        public static final int BACK_RIGHT_DRIVE_MOTOR = 13;
+        public static final int BACK_RIGHT_ANGLE_MOTOR = 14;
+        public static final int BACK_RIGHT_CANCODER = 18;
     }
 
     public static class ModuleConstants {
@@ -33,7 +33,7 @@ public class Constants {
     }
 
     public static class DrivetrainConstants {
-        public static final double MAX_SPEED = Units.feetToMeters(13.6); // 13.6 feet per second
+        public static final double MAX_SPEED = Units.feetToMeters(10.0); // TODO - 10 for now, figure out later - 13.6 feet per second?
         public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
         public static final Translation2d FRONT_LEFT_POS = new Translation2d(Units.inchesToMeters(10), Units.inchesToMeters(10));
         public static final Translation2d FRONT_RIGHT_POS = new Translation2d(Units.inchesToMeters(10), Units.inchesToMeters(-10));
