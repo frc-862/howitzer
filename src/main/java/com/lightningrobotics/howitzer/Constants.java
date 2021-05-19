@@ -35,10 +35,10 @@ public class Constants {
     public static class DrivetrainConstants {
         public static final double MAX_SPEED = Units.feetToMeters(10.0); // TODO - 10 for now, figure out later - 13.6 feet per second?
         public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
-        public static final Translation2d FRONT_LEFT_POS = new Translation2d(Units.inchesToMeters(10), Units.inchesToMeters(10));
-        public static final Translation2d FRONT_RIGHT_POS = new Translation2d(Units.inchesToMeters(10), Units.inchesToMeters(-10));
-        public static final Translation2d BACK_LEFT_POS = new Translation2d(Units.inchesToMeters(-10), Units.inchesToMeters(10));
-        public static final Translation2d BACK_RIGHT_POS = new Translation2d(Units.inchesToMeters(-10), Units.inchesToMeters(-10));
+        public static final Translation2d FRONT_LEFT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(11.25));
+        public static final Translation2d FRONT_RIGHT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(-11.25));
+        public static final Translation2d BACK_LEFT_POS = new Translation2d(Units.inchesToMeters(-11.25), Units.inchesToMeters(11.25));
+        public static final Translation2d BACK_RIGHT_POS = new Translation2d(Units.inchesToMeters(-11.25), Units.inchesToMeters(-11.25));
     }
 
     public static class JoystickConstants {

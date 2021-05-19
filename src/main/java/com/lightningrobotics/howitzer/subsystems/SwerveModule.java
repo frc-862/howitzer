@@ -5,8 +5,10 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.lightningrobotics.howitzer.Constants.DrivetrainConstants;
 import com.lightningrobotics.howitzer.Constants.ModuleConstants;
 
@@ -47,6 +49,8 @@ public class SwerveModule {
         driveMotor.configAllSettings(driveTalonFXConfiguration);
 
         CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
+        canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees();
         canCoder.configAllSettings(canCoderConfiguration);
 
