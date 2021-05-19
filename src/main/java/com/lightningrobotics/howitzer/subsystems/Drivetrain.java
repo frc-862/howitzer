@@ -35,16 +35,16 @@ public class Drivetrain extends SubsystemBase {
         modules = new SwerveModule[] {
                 new SwerveModule(new TalonFX(RobotMap.FRONT_LEFT_DRIVE_MOTOR),
                         new TalonFX(RobotMap.FRONT_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_LEFT_CANCODER),
-                        Rotation2d.fromDegrees(0)), // Front Left
+                        Rotation2d.fromDegrees(-95.09765625)), // Front Left
                 new SwerveModule(new TalonFX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR),
                         new TalonFX(RobotMap.FRONT_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_RIGHT_CANCODER),
-                        Rotation2d.fromDegrees(0)), // Front Right
+                        Rotation2d.fromDegrees(-12.744140625)), // Front Right
                 new SwerveModule(new TalonFX(RobotMap.BACK_LEFT_DRIVE_MOTOR),
                         new TalonFX(RobotMap.BACK_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_LEFT_CANCODER),
-                        Rotation2d.fromDegrees(0)), // Back Left
+                        Rotation2d.fromDegrees(30.673828125)), // Back Left
                 new SwerveModule(new TalonFX(RobotMap.BACK_RIGHT_DRIVE_MOTOR),
                         new TalonFX(RobotMap.BACK_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_RIGHT_CANCODER),
-                        Rotation2d.fromDegrees(0)) // Back Right
+                        Rotation2d.fromDegrees(119.00390625)) // Back Right
         };
 
         imu = IMU.navX(); //IMU.pigeon(RobotMap.PIGEON);
