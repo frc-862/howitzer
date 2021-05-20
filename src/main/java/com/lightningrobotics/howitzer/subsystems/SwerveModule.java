@@ -27,6 +27,7 @@ public class SwerveModule {
         this.angleMotor = angleMotor;
         this.canCoder = canCoder;
 
+        angleMotor.configFactoryDefault();
         TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
 
         angleTalonFXConfiguration.slot0.kP = ModuleConstants.ANGLE_P;
@@ -39,6 +40,7 @@ public class SwerveModule {
         angleTalonFXConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
         angleMotor.configAllSettings(angleTalonFXConfiguration);
 
+        driveMotor.configFactoryDefault();
         TalonFXConfiguration driveTalonFXConfiguration = new TalonFXConfiguration();
 
         driveTalonFXConfiguration.slot0.kP = ModuleConstants.DRIVE_P;
@@ -81,7 +83,8 @@ public class SwerveModule {
         double deltaTicks = (rotationDelta.getDegrees() / 360) * ModuleConstants.TICKS_PER_REV_CANCODER;
 
         // Convert the CANCoder from it's position reading back to ticks
-        double currentTicks = canCoder.getPosition() / canCoder.configGetFeedbackCoefficient();
+        // double currentTicks = canCoder.getPosition() / canCoder.configGetFeedbackCoefficient(); // TODO this?
+        double currentTicks = canCoder.getAbsolutePosition() / canCoder.configGetFeedbackCoefficient();
         double desiredTicks = currentTicks + deltaTicks;
         angleMotor.set(TalonFXControlMode.Position, desiredTicks);
 

@@ -5,7 +5,6 @@ import com.lightningrobotics.howitzer.subsystems.SwerveModule;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ModuleControl extends CommandBase {
@@ -39,13 +38,9 @@ public class ModuleControl extends CommandBase {
 
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {
-    
-        // Shuffleboard.getTab("Module Controller").addBoolean("Drivetrain null", () -> (drivetrain == null));
-        // Shuffleboard.getTab("Module Controller").addNumber("Module #", () -> moduleNumber.getValue());
-        
+    public void initialize() {        
         module = drivetrain.modules[moduleNumber.getValue()];
-        state = new SwerveModuleState(speed, module.getAngle().plus(Rotation2d.fromDegrees(180)));
+        state = new SwerveModuleState(speed, module.getAngle().plus(Rotation2d.fromDegrees(90)));
     }
 
     // Called every time the scheduler runs while the command is scheduled.

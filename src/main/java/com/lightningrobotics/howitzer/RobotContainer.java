@@ -3,7 +3,9 @@ package com.lightningrobotics.howitzer;
 import java.util.Arrays;
 
 import com.lightningrobotics.howitzer.Constants.JoystickConstants;
+import com.lightningrobotics.howitzer.Constants.RobotMap;
 import com.lightningrobotics.howitzer.commands.ModuleControl;
+import com.lightningrobotics.howitzer.commands.MotorTest;
 import com.lightningrobotics.howitzer.commands.SwerveDriveCommand;
 import com.lightningrobotics.howitzer.commands.ModuleControl.ModuleNumber;
 import com.lightningrobotics.howitzer.commands.auto.TestPathCommand;
@@ -62,6 +64,14 @@ public class RobotContainer extends LightningContainer {
 
     @Override
     protected void initializeDashboardCommands() {
+        // Shuffleboard.getTab("Motors").add("Front Right Turn", new MotorTest(RobotMap.FRONT_RIGHT_ANGLE_MOTOR));
+        // Shuffleboard.getTab("Motors").add("Front Left Turn", new MotorTest(RobotMap.FRONT_LEFT_ANGLE_MOTOR));
+        // Shuffleboard.getTab("Motors").add("Back Right Turn", new MotorTest(RobotMap.BACK_RIGHT_ANGLE_MOTOR));
+        // Shuffleboard.getTab("Motors").add("Back Left Turn", new MotorTest(RobotMap.BACK_LEFT_ANGLE_MOTOR));
+        // Shuffleboard.getTab("Motors").add("Front Right Drive", new MotorTest(RobotMap.FRONT_RIGHT_DRIVE_MOTOR));
+        // Shuffleboard.getTab("Motors").add("Front Left Drive", new MotorTest(RobotMap.FRONT_LEFT_DRIVE_MOTOR));
+        // Shuffleboard.getTab("Motors").add("Back Right Drive", new MotorTest(RobotMap.BACK_RIGHT_DRIVE_MOTOR));
+        // Shuffleboard.getTab("Motors").add("Back Left Drive", new MotorTest(RobotMap.BACK_LEFT_DRIVE_MOTOR));
         Shuffleboard.getTab("Module Controller").add("Front Left",
             new ModuleControl(drivetrain, ModuleNumber.FRONT_LEFT_MOTOR, 0.15));
 

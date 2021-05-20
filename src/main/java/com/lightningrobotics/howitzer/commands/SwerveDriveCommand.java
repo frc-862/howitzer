@@ -25,10 +25,16 @@ public class SwerveDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        final var xSpeed = -xspeedLimiter.calculate(controller.getY(GenericHID.Hand.kLeft)) * DrivetrainConstants.MAX_SPEED;
-        final var ySpeed = -yspeedLimiter.calculate(controller.getX(GenericHID.Hand.kLeft)) * DrivetrainConstants.MAX_SPEED;
-        final var rot = -rotLimiter.calculate(controller.getX(GenericHID.Hand.kRight)) * DrivetrainConstants.MAX_ANGULAR_SPEED;
-        boolean fieldRelative = !controller.getBumper(GenericHID.Hand.kLeft);
+        // final var xSpeed = -xspeedLimiter.calculate(controller.getY(GenericHID.Hand.kLeft)) * DrivetrainConstants.MAX_SPEED;
+        // final var ySpeed = -yspeedLimiter.calculate(controller.getX(GenericHID.Hand.kLeft)) * DrivetrainConstants.MAX_SPEED;
+        // final var rot = -rotLimiter.calculate(controller.getX(GenericHID.Hand.kRight)) * DrivetrainConstants.MAX_ANGULAR_SPEED;
+
+        final var xSpeed = -controller.getX(GenericHID.Hand.kLeft) * DrivetrainConstants.MAX_SPEED;
+        final var ySpeed = -controller.getY(GenericHID.Hand.kLeft) * DrivetrainConstants.MAX_SPEED;
+        final var rot = -controller.getX(GenericHID.Hand.kRight) * DrivetrainConstants.MAX_ANGULAR_SPEED;
+
+        boolean fieldRelative = !controller.getBumper(GenericHID.Hand.kRight);
+
         drivetrain.drive(xSpeed, ySpeed, rot, fieldRelative);
     }
 
