@@ -26,15 +26,16 @@ public class Constants {
         public static final double DRIVE_I = 0.01;
         public static final double DRIVE_D = 0.1;
         public static final double DRIVE_F = 0.2;
-        public static final double ANGLE_P = 1.0;
+        public static final double ANGLE_P = 5.0; // TODO need to be better
         public static final double ANGLE_I = 0.0;
         public static final double ANGLE_D = 0.0;
         public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
     }
 
     public static class DrivetrainConstants {
-        public static final double MAX_SPEED = 1.0; // this should be in feet/sec //Units.feetToMeters(13.6); // TODO - 10 for now, figure out later - 13.6 feet per second?
-        public static final double MAX_ANGULAR_SPEED = 0.25 * Math.PI; //Math.PI; // 1/2 rotation per second
+        public static final double MAX_SPEED = Units.feetToMeters(13.6); // this should be in feet/sec //Units.feetToMeters(13.6); // TODO - 10 for now, figure out later - 13.6 feet per second?
+        public static final double MAX_ANGULAR_SPEED = Math.PI; //Math.PI; // 1/2 rotation per second
+        public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;
         public static final Translation2d FRONT_LEFT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(11.25));
         public static final Translation2d FRONT_RIGHT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(-11.25));
         public static final Translation2d BACK_LEFT_POS = new Translation2d(Units.inchesToMeters(-11.25), Units.inchesToMeters(11.25));

@@ -1,10 +1,13 @@
 package com.lightningrobotics.howitzer.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
@@ -12,49 +15,54 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.lightningrobotics.howitzer.Constants.DrivetrainConstants;
 import com.lightningrobotics.howitzer.Constants.ModuleConstants;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 
 public class SwerveModule {
 
-    private TalonFX driveMotor;
-    private TalonFX angleMotor;
+    private WPI_TalonFX driveMotor;
+    private WPI_TalonFX angleMotor;
     private CANCoder canCoder;
 
-    public SwerveModule(TalonFX driveMotor, TalonFX angleMotor, CANCoder canCoder, Rotation2d offset) {
+    private SwerveModuleState desiredState;
+
+    private double thinkingSpeed = 0d;
+
+    private final PIDController driveController = new PIDController(ModuleConstants.DRIVE_P, ModuleConstants.DRIVE_I, ModuleConstants.DRIVE_D);
+
+    private final ProfiledPIDController turnController = new ProfiledPIDController(ModuleConstants.ANGLE_P, ModuleConstants.ANGLE_I, ModuleConstants.ANGLE_D, new TrapezoidProfile.Constraints(DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCEL));
+
+    private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.0, 0.0);
+    private final SimpleMotorFeedforward turnFF = new SimpleMotorFeedforward(0.5, 0.5);
+
+    public SwerveModule(WPI_TalonFX driveMotor, WPI_TalonFX angleMotor, CANCoder canCoder, Rotation2d offset) {
         this.driveMotor = driveMotor;
         this.angleMotor = angleMotor;
         this.canCoder = canCoder;
 
-        angleMotor.configFactoryDefault();
-        TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
-
-        angleTalonFXConfiguration.slot0.kP = ModuleConstants.ANGLE_P;
-        angleTalonFXConfiguration.slot0.kI = ModuleConstants.ANGLE_I;
-        angleTalonFXConfiguration.slot0.kD = ModuleConstants.ANGLE_D;
-
-        // Use the CANCoder as the remote sensor for the primary TalonFX PID
-        angleTalonFXConfiguration.remoteFilter0.remoteSensorDeviceID = canCoder.getDeviceID();
-        angleTalonFXConfiguration.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
-        angleTalonFXConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
-        angleMotor.configAllSettings(angleTalonFXConfiguration);
-
-        driveMotor.configFactoryDefault();
-        TalonFXConfiguration driveTalonFXConfiguration = new TalonFXConfiguration();
-
-        driveTalonFXConfiguration.slot0.kP = ModuleConstants.DRIVE_P;
-        driveTalonFXConfiguration.slot0.kI = ModuleConstants.DRIVE_I;
-        driveTalonFXConfiguration.slot0.kD = ModuleConstants.DRIVE_D;
-        driveTalonFXConfiguration.slot0.kF = ModuleConstants.DRIVE_F;
-
-        driveMotor.configAllSettings(driveTalonFXConfiguration);
-
         CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
         canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        // canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToZero;
         canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees();
         canCoder.configAllSettings(canCoderConfiguration);
+
+        angleMotor.configFactoryDefault();
+        angleMotor.setNeutralMode(NeutralMode.Brake);
+
+        driveMotor.configFactoryDefault();
+        driveMotor.setNeutralMode(NeutralMode.Brake);
+
+        turnController.enableContinuousInput(-Math.PI, Math.PI);
+
+        desiredState = new SwerveModuleState(0d, Rotation2d.fromDegrees(0d));
+        Shuffleboard.getTab("Drivetrain").addString(("Desired State for " + angleMotor.getDeviceID()), () -> desiredState.toString());
+        Shuffleboard.getTab("Drivetrain").addNumber(("Speed " + angleMotor.getDeviceID()), () -> thinkingSpeed);
 
     }
 
@@ -72,24 +80,24 @@ public class SwerveModule {
      * @param desiredState - A SwerveModuleState representing the desired new state of the module
      */
     public void setDesiredState(SwerveModuleState desiredState) {
+
+        this.desiredState = desiredState;
+
         Rotation2d currentRotation = getAngle();
+
         SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentRotation);
 
-        // Find the difference between our current rotational position + our new
-        // rotational position
-        Rotation2d rotationDelta = state.angle.minus(currentRotation);
+        // double currentSpeedMetersPerSecond = 0;
+        // final double driveOutput = driveController.calculate(currentSpeedMetersPerSecond, state.speedMetersPerSecond);
+        // // final double driveOutput = driveController.calculate(0d, 0d);
+        // final double driveFeedForward = driveFF.calculate(state.speedMetersPerSecond);
+        // driveMotor.setVoltage(driveOutput + driveFeedForward);
+        thinkingSpeed = (state.speedMetersPerSecond / DrivetrainConstants.MAX_SPEED); // METERS PER SECOND
+        driveMotor.set( thinkingSpeed * 0.25 );
 
-        // Find the new absolute position of the module based on the difference in rotation
-        double deltaTicks = (rotationDelta.getDegrees() / 360) * ModuleConstants.TICKS_PER_REV_CANCODER;
-
-        // Convert the CANCoder from it's position reading back to ticks
-        // double currentTicks = canCoder.getPosition() / canCoder.configGetFeedbackCoefficient(); // TODO this?
-        double currentTicks = canCoder.getAbsolutePosition() / canCoder.configGetFeedbackCoefficient();
-        double desiredTicks = currentTicks + deltaTicks;
-        angleMotor.set(TalonFXControlMode.Position, desiredTicks);
-
-        double feetPerSecond = Units.metersToFeet(state.speedMetersPerSecond);
-        driveMotor.set(TalonFXControlMode.PercentOutput, feetPerSecond / DrivetrainConstants.MAX_SPEED);
+        final double turnOutput = turnController.calculate(currentRotation.getRadians(), state.angle.getRadians());
+        final double turnFeedForward = turnFF.calculate(turnController.getSetpoint().velocity);
+        angleMotor.setVoltage(turnOutput + turnFeedForward);
 
     }
 

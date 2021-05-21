@@ -1,6 +1,7 @@
 package com.lightningrobotics.howitzer.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.lightningrobotics.howitzer.Constants.DrivetrainConstants;
@@ -36,17 +37,17 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain() {
 
         modules = new SwerveModule[] {
-                new SwerveModule(new TalonFX(RobotMap.FRONT_LEFT_DRIVE_MOTOR),
-                        new TalonFX(RobotMap.FRONT_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_LEFT_CANCODER),
+                new SwerveModule(new WPI_TalonFX(RobotMap.FRONT_LEFT_DRIVE_MOTOR),
+                        new WPI_TalonFX(RobotMap.FRONT_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_LEFT_CANCODER),
                         Rotation2d.fromDegrees(-95.09765625)), // Front Left
-                new SwerveModule(new TalonFX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR),
-                        new TalonFX(RobotMap.FRONT_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_RIGHT_CANCODER),
+                new SwerveModule(new WPI_TalonFX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR),
+                        new WPI_TalonFX(RobotMap.FRONT_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_RIGHT_CANCODER),
                         Rotation2d.fromDegrees(-12.744140625)), // Front Right
-                new SwerveModule(new TalonFX(RobotMap.BACK_LEFT_DRIVE_MOTOR),
-                        new TalonFX(RobotMap.BACK_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_LEFT_CANCODER),
+                new SwerveModule(new WPI_TalonFX(RobotMap.BACK_LEFT_DRIVE_MOTOR),
+                        new WPI_TalonFX(RobotMap.BACK_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_LEFT_CANCODER),
                         Rotation2d.fromDegrees(30.673828125)), // Back Left
-                new SwerveModule(new TalonFX(RobotMap.BACK_RIGHT_DRIVE_MOTOR),
-                        new TalonFX(RobotMap.BACK_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_RIGHT_CANCODER),
+                new SwerveModule(new WPI_TalonFX(RobotMap.BACK_RIGHT_DRIVE_MOTOR),
+                        new WPI_TalonFX(RobotMap.BACK_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_RIGHT_CANCODER),
                         Rotation2d.fromDegrees(119.00390625)) // Back Right
         };
 
@@ -107,16 +108,14 @@ public class Drivetrain extends SubsystemBase {
      * @param fieldRelative Whether the provided x and y speeds are relative to the
      *                      field.
      */
-    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(
-                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading())
-                        : new ChassisSpeeds(xSpeed, ySpeed, rot));
+    public void drive(double xSpeed, double ySpeed, double rot) {
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
         SwerveDriveKinematics.normalizeWheelSpeeds(states, DrivetrainConstants.MAX_SPEED);
-        modules[0].setDesiredState(states[0]);
-        modules[1].setDesiredState(states[1]);
-        modules[2].setDesiredState(states[2]);
-        modules[3].setDesiredState(states[3]);
-        // setModuleStates(states);
+        // modules[0].setDesiredState(states[0]);
+        // modules[1].setDesiredState(states[1]);
+        // modules[2].setDesiredState(states[2]);
+        // modules[3].setDesiredState(states[3]);
+        setModuleStates(states);
     }
 
     public void updateOdometry() {
@@ -162,6 +161,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void stop() {
-        drive(0d, 0d, getHeading().getDegrees(), true);
+        drive(0d, 0d, getHeading().getDegrees());
     }
 }
