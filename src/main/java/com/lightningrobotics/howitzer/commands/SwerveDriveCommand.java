@@ -4,7 +4,6 @@ import com.lightningrobotics.howitzer.Constants.DrivetrainConstants;
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 

@@ -26,9 +26,9 @@ public class Constants {
         public static final double DRIVE_I = 0.01;
         public static final double DRIVE_D = 0.1;
         public static final double DRIVE_F = 0.2;
-        public static final double ANGLE_P = 5.0; // TODO need to be better
-        public static final double ANGLE_I = 0.0;
-        public static final double ANGLE_D = 0.0;
+        public static final double ANGLE_P = 7.5; // TODO need to be better
+        public static final double ANGLE_I = 0.05;
+        public static final double ANGLE_D = 0.1;
         public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
     }
 

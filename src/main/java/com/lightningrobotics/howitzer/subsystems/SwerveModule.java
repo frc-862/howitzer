@@ -1,12 +1,6 @@
 package com.lightningrobotics.howitzer.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -93,7 +87,7 @@ public class SwerveModule {
         // final double driveFeedForward = driveFF.calculate(state.speedMetersPerSecond);
         // driveMotor.setVoltage(driveOutput + driveFeedForward);
         thinkingSpeed = (state.speedMetersPerSecond / DrivetrainConstants.MAX_SPEED); // METERS PER SECOND
-        driveMotor.set( thinkingSpeed * 0.25 );
+        driveMotor.set( thinkingSpeed * 0.3 );
 
         final double turnOutput = turnController.calculate(currentRotation.getRadians(), state.angle.getRadians());
         final double turnFeedForward = turnFF.calculate(turnController.getSetpoint().velocity);
