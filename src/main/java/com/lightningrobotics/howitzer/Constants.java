@@ -34,6 +34,7 @@ public class Constants {
 
     public static class DrivetrainConstants {
         public static final double MAX_SPEED = Units.feetToMeters(13.6); // this should be in feet/sec //Units.feetToMeters(13.6); // TODO - 10 for now, figure out later - 13.6 feet per second?
+        public static final double MAX_ACCEL = 3.0; //TODO 3 for now, figure out later
         public static final double MAX_ANGULAR_SPEED = Math.PI; //Math.PI; // 1/2 rotation per second
         public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;
         public static final Translation2d FRONT_LEFT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(11.25));

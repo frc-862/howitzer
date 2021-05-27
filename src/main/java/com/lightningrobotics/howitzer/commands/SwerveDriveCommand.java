@@ -20,9 +20,10 @@ public class SwerveDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        final var xSpeed = -controller.getY(GenericHID.Hand.kLeft) * DrivetrainConstants.MAX_SPEED;
-        final var ySpeed = -controller.getX(GenericHID.Hand.kLeft) * DrivetrainConstants.MAX_SPEED;
-        final var rot = -controller.getX(GenericHID.Hand.kRight) * DrivetrainConstants.MAX_ANGULAR_SPEED;
+        //TODO fix these variable names
+        final double xSpeed = -controller.getY(GenericHID.Hand.kLeft) * DrivetrainConstants.MAX_SPEED; // The y axis of the left joysick corresponds to the yspeed (variable name is wrong)
+        final double ySpeed = -controller.getX(GenericHID.Hand.kLeft) * DrivetrainConstants.MAX_SPEED;  // The x axis of the left joysick corresponds to the xspeed (variable name is wrong)
+        final double rot = -controller.getX(GenericHID.Hand.kRight) * DrivetrainConstants.MAX_ANGULAR_SPEED; // The x axis of the right joystick corresponds to the rotation (yaw) of the robot
 
         drivetrain.drive(xSpeed, ySpeed, rot);
     }

@@ -34,7 +34,7 @@ public class Drivetrain extends SubsystemBase {
     private double[] ypr = new double[3];
 
     public Drivetrain() {
-
+        // Creating a list of our swerve modules 
         modules = new SwerveModule[] {
                 new SwerveModule(new WPI_TalonFX(RobotMap.FRONT_LEFT_DRIVE_MOTOR),
                         new WPI_TalonFX(RobotMap.FRONT_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_LEFT_CANCODER),
@@ -50,22 +50,28 @@ public class Drivetrain extends SubsystemBase {
                         Rotation2d.fromDegrees(119.00390625)) // Back Right
         };
 
+        // Configuring our pigeon 
         imu = new PigeonIMU(RobotMap.PIGEON);
-        imu.configFactoryDefault();
-        imu.setYaw(0d);
-        imu.setAccumZAngle(0d);
-        // imu = IMU.pigeon(RobotMap.PIGEON);
-        // imu.reset();
+        imu.configFactoryDefault(); // set the IMU to factory default settings
+        imu.setYaw(0d); // Set yaw (heading, about the z axis) to 0
+        imu.setAccumZAngle(0d); // reset accumulated yaw (about the z axis) to 0
 
+        // TODO for debuging, this could be removed later
+        // Adding our heading to the shuffleboard
         Shuffleboard.getTab("Drivetrain").addNumber("Heading", () -> getHeading().getDegrees());
 
+        // Creating PIDController object and setting our PID values
         ffController = new PIDController(ModuleConstants.DRIVE_P, ModuleConstants.DRIVE_I, ModuleConstants.DRIVE_D);
 
+        // Creating kinematics object and setting the postion of the wheels relative to the center of the robot
         kinematics = new SwerveDriveKinematics(DrivetrainConstants.FRONT_LEFT_POS, DrivetrainConstants.FRONT_RIGHT_POS,
                 DrivetrainConstants.BACK_LEFT_POS, DrivetrainConstants.BACK_RIGHT_POS);
 
+        // Creating a swerveDriveOdometry object and setting kinematics and current heading  
         odometry = new SwerveDriveOdometry(kinematics, getHeading());
 
+        // TODO for debuging, this could be removed later 
+        // Adding swerve module angles to shuffleboard tabs 
         Shuffleboard.getTab("Drivetrain").addNumber("Front Left CANCoder", () -> modules[0].getAngle().getDegrees());
         Shuffleboard.getTab("Drivetrain").addNumber("Front Right CANCoder", () -> modules[1].getAngle().getDegrees());
         Shuffleboard.getTab("Drivetrain").addNumber("Back Left CANCoder", () -> modules[2].getAngle().getDegrees());
@@ -76,25 +82,26 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
-        imu.getYawPitchRoll(ypr);
+        imu.getYawPitchRoll(ypr); // update our yaw, pitch, and roll regularly
     }
 
+    /** Get the current heading constrained to a range of -180 to 180 degrees */
     public Rotation2d getHeading() {
-        double heading = ypr[0];
-        double sign = Math.signum(heading);
-        double filteredRot = sign * (((Math.abs(heading) + 180) % 360) - 180); 
-        return Rotation2d.fromDegrees(filteredRot);
+        double heading = ypr[0]; // getting yaw (orientation)
+        double sign = Math.signum(heading); // get the sign of the current heading (returns 1 if positive, -1 if negative)
+        double filteredRot = sign * (((Math.abs(heading) + 180) % 360) - 180); //  constrain the angle to be within -180 and 180 degrees
+        return Rotation2d.fromDegrees(filteredRot); // return the angle in the form of a rotation2d object
     }
 
+    /** 
+     * Iterate through the provided states and apply each to the corresponding swerve module
+     * @param states    A list containing states corresponding to each of the swerve modules
+    */
     public void setModuleStates(SwerveModuleState[] states) {
-        // SwerveModule module = modules[1];
-        // SwerveModuleState state = states[1];
-        // module.setDesiredState(state);
-
-        for (int i = 0; i < states.length; i++) {
-            SwerveModule module = modules[i];
-            SwerveModuleState state = states[i];
-            module.setDesiredState(state);
+        for (int i = 0; i < states.length; i++) { // iterate through each item in the list of states
+            SwerveModule module = modules[i]; // set module to be the selected module from the list
+            SwerveModuleState state = states[i]; // set state to be the selected module from the list
+            module.setDesiredState(state); // Set the desired state of the selected module to the selected state
         }
     }
 
@@ -108,27 +115,27 @@ public class Drivetrain extends SubsystemBase {
      *                      field.
      */
     public void drive(double xSpeed, double ySpeed, double rot) {
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
-        SwerveDriveKinematics.normalizeWheelSpeeds(states, DrivetrainConstants.MAX_SPEED);
-        // modules[0].setDesiredState(states[0]);
-        // modules[1].setDesiredState(states[1]);
-        // modules[2].setDesiredState(states[2]);
-        // modules[3].setDesiredState(states[3]);
-        setModuleStates(states);
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading())); // Get chassis speeds and convert them to swerve module states
+        SwerveDriveKinematics.normalizeWheelSpeeds(states, DrivetrainConstants.MAX_SPEED); // Prevent motors from spinning over the max speed
+        setModuleStates(states); //set all of the module states
     }
 
+    /**  update the odometry value
+    */
     public void updateOdometry() {
-        odometry.update(getHeading(), modules[0].getState(), modules[1].getState(), modules[2].getState(), modules[3].getState());
+        odometry.update(getHeading(), modules[0].getState(), modules[1].getState(), modules[2].getState(), modules[3].getState()); 
     }
 
+
+    // Accesser functions
     public Pose2d getOdometryPose2d() {
-        updateOdometry();
-        return odometry.getPoseMeters();
+        updateOdometry(); // First, update the odometry
+        return odometry.getPoseMeters(); // return the odometry position in meters
     }
 
     public Rotation2d getOdometryRotation2d() {
-        updateOdometry();
-        return odometry.getPoseMeters().getRotation();
+        updateOdometry(); // set module to be the selected module from the list
+        return odometry.getPoseMeters().getRotation(); // return the rotation as a rotation2d
     }
 
     public SwerveDriveKinematics getKinematics() {
@@ -140,7 +147,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getMaxAcceleration() {
-        return 3d;
+        return DrivetrainConstants.MAX_ACCEL;
     }
 
     public PIDController getFeedforward() {
@@ -159,6 +166,9 @@ public class Drivetrain extends SubsystemBase {
         return null;
     }
 
+    /** set the x and y speeds to 0
+     * rotation is set to the current rotation
+     */
     public void stop() {
         drive(0d, 0d, getHeading().getDegrees());
     }

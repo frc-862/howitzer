@@ -14,13 +14,18 @@ public class ModuleControl extends CommandBase {
     private Drivetrain drivetrain;
     private ModuleNumber moduleNumber;
     private double speed;
+    private double rot;
 
+    /** Enum to represent each swerve module as a number */
     public enum ModuleNumber {
         FRONT_LEFT_MOTOR(0),
         FRONT_RIGHT_MOTOR(1),
         BACK_LEFT_MOTOR(2),
         BACK_RIGHT_MOTOR(3);
         private int value;
+        /** 
+         * @param motorNumber   Index of the modules array from the drivetrain subsystem
+         */
         private ModuleNumber(int motorNumber){
             value = motorNumber;
         }
@@ -29,18 +34,19 @@ public class ModuleControl extends CommandBase {
         }
     }
 
-    public ModuleControl(Drivetrain drivetrain, ModuleNumber moduleNumber, double speed) {
+    public ModuleControl(Drivetrain drivetrain, ModuleNumber moduleNumber, double speed, double rot) {
         this.drivetrain = drivetrain;
         this.speed = speed;
         this.moduleNumber = moduleNumber;
+        this.rot = rot;
         addRequirements(drivetrain);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {        
-        module = drivetrain.modules[moduleNumber.getValue()];
-        state = new SwerveModuleState(speed, module.getAngle().plus(Rotation2d.fromDegrees(90)));
+        module = drivetrain.modules[moduleNumber.getValue()]; // Set module to the provided module number
+        state = new SwerveModuleState(speed, module.getAngle().plus(Rotation2d.fromDegrees(rot))); // set state to a new state with the provided speed and the current orientation plus the provided rotation
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -50,6 +56,9 @@ public class ModuleControl extends CommandBase {
     }
 
     @Override
+    /**
+     * Set the speed to 0, and don't change the angle
+     */
     public void end(boolean interrupted) {
         state = new SwerveModuleState(0, module.getAngle());
         module.setDesiredState(state);

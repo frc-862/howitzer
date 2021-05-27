@@ -4,23 +4,18 @@
 
 package com.lightningrobotics.howitzer.commands.auto;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
 
-import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Transform2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.lightning.subsystems.LightningDrivetrain;
 
 public class TestPathCommand extends CommandBase {
 
@@ -39,7 +34,7 @@ public class TestPathCommand extends CommandBase {
 		Trajectory translatedTrajectory = trajectory.transformBy(transform);
 	
 		SwerveControllerCommand cmd = new SwerveControllerCommand(
-		    translatedTrajectory,
+		    translatedTrajectory, 
 		    drivetrain::getOdometryPose2d,
 		    drivetrain.getKinematics(),
 		    drivetrain.getXPidController(),
@@ -56,25 +51,8 @@ public class TestPathCommand extends CommandBase {
 
 	
   /** Creates a new TestPathCommand. */
-  public TestPathCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public TestPathCommand(Drivetrain drivetrain) {
+	  addRequirements(drivetrain);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
 }

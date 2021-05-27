@@ -34,11 +34,12 @@ public class RobotContainer extends LightningContainer {
     @Override
     protected void configureAutonomousCommands() 
     {
-        // Autonomous.register("Forward", new TestPathCommand().getCommand(drivetrain, 
-        //     Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d()))));
+        // TODO These need to be uncommented and made to work
+        Autonomous.register("Forward", new TestPathCommand(drivetrain).getCommand(drivetrain, 
+            Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d()))));
 
-        // Autonomous.register("Backward", new TestPathCommand().getCommand(drivetrain, 
-        //     Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(-1d, 0d, new Rotation2d()))));
+        Autonomous.register("Backward", new TestPathCommand(drivetrain).getCommand(drivetrain, 
+           Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(-1d, 0d, new Rotation2d()))));
     }
 
     @Override
@@ -64,25 +65,17 @@ public class RobotContainer extends LightningContainer {
 
     @Override
     protected void initializeDashboardCommands() {
-        // Shuffleboard.getTab("Motors").add("Front Right Turn", new MotorTest(RobotMap.FRONT_RIGHT_ANGLE_MOTOR));
-        // Shuffleboard.getTab("Motors").add("Front Left Turn", new MotorTest(RobotMap.FRONT_LEFT_ANGLE_MOTOR));
-        // Shuffleboard.getTab("Motors").add("Back Right Turn", new MotorTest(RobotMap.BACK_RIGHT_ANGLE_MOTOR));
-        // Shuffleboard.getTab("Motors").add("Back Left Turn", new MotorTest(RobotMap.BACK_LEFT_ANGLE_MOTOR));
-        // Shuffleboard.getTab("Motors").add("Front Right Drive", new MotorTest(RobotMap.FRONT_RIGHT_DRIVE_MOTOR));
-        // Shuffleboard.getTab("Motors").add("Front Left Drive", new MotorTest(RobotMap.FRONT_LEFT_DRIVE_MOTOR));
-        // Shuffleboard.getTab("Motors").add("Back Right Drive", new MotorTest(RobotMap.BACK_RIGHT_DRIVE_MOTOR));
-        // Shuffleboard.getTab("Motors").add("Back Left Drive", new MotorTest(RobotMap.BACK_LEFT_DRIVE_MOTOR));
         Shuffleboard.getTab("Module Controller").add("Front Left",
-            new ModuleControl(drivetrain, ModuleNumber.FRONT_LEFT_MOTOR, 0.15));
+            new ModuleControl(drivetrain, ModuleNumber.FRONT_LEFT_MOTOR, 0.15, 90));
 
         Shuffleboard.getTab("Module Controller").add("Front Right",
-            new ModuleControl(drivetrain, ModuleNumber.FRONT_RIGHT_MOTOR, 0.15));
+            new ModuleControl(drivetrain, ModuleNumber.FRONT_RIGHT_MOTOR, 0.15, 90));
 
         Shuffleboard.getTab("Module Controller").add("Back Left",
-            new ModuleControl(drivetrain, ModuleNumber.BACK_LEFT_MOTOR, 0.15));
+            new ModuleControl(drivetrain, ModuleNumber.BACK_LEFT_MOTOR, 0.15, 90));
 
         Shuffleboard.getTab("Module Controller").add("Back Right",
-            new ModuleControl(drivetrain, ModuleNumber.BACK_RIGHT_MOTOR, 0.15));
+            new ModuleControl(drivetrain, ModuleNumber.BACK_RIGHT_MOTOR, 0.15, 90));
     }
 
     @Override

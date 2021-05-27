@@ -27,11 +27,11 @@ public class SwerveModule {
 
     private double thinkingSpeed = 0d;
 
+    // TODO set up and tune drive PID
     private final PIDController driveController = new PIDController(ModuleConstants.DRIVE_P, ModuleConstants.DRIVE_I, ModuleConstants.DRIVE_D);
+    private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.0, 0.0);
 
     private final ProfiledPIDController turnController = new ProfiledPIDController(ModuleConstants.ANGLE_P, ModuleConstants.ANGLE_I, ModuleConstants.ANGLE_D, new TrapezoidProfile.Constraints(DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCEL));
-
-    private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.0, 0.0);
     private final SimpleMotorFeedforward turnFF = new SimpleMotorFeedforward(0.5, 0.5);
 
     public SwerveModule(WPI_TalonFX driveMotor, WPI_TalonFX angleMotor, CANCoder canCoder, Rotation2d offset) {
@@ -39,22 +39,26 @@ public class SwerveModule {
         this.angleMotor = angleMotor;
         this.canCoder = canCoder;
 
+        // Configure CanCoder
         CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
         canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
         // canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToZero;
-        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-        canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees();
+        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180; // Set the range to -180, 180 degrees
+        canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees(); // Set the provided magnet offset
         canCoder.configAllSettings(canCoderConfiguration);
 
+        // Set drive and anglemotors to brake mode
         angleMotor.configFactoryDefault();
         angleMotor.setNeutralMode(NeutralMode.Brake);
 
         driveMotor.configFactoryDefault();
         driveMotor.setNeutralMode(NeutralMode.Brake);
 
+        //TODO verify this is the optimal unit
         turnController.enableContinuousInput(-Math.PI, Math.PI);
 
-        desiredState = new SwerveModuleState(0d, Rotation2d.fromDegrees(0d));
+        desiredState = new SwerveModuleState(0d, Rotation2d.fromDegrees(0d)); // Initialize desiredstate to 0
+        //TODO Remove shuffleboard debug statements at some point
         Shuffleboard.getTab("Drivetrain").addString(("Desired State for " + angleMotor.getDeviceID()), () -> desiredState.toString());
         Shuffleboard.getTab("Drivetrain").addNumber(("Speed " + angleMotor.getDeviceID()), () -> thinkingSpeed);
 
@@ -74,27 +78,24 @@ public class SwerveModule {
      * @param desiredState - A SwerveModuleState representing the desired new state of the module
      */
     public void setDesiredState(SwerveModuleState desiredState) {
-
         this.desiredState = desiredState;
 
         Rotation2d currentRotation = getAngle();
 
-        SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentRotation);
+        SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentRotation); // Optimize the turning of a state
 
-        // double currentSpeedMetersPerSecond = 0;
-        // final double driveOutput = driveController.calculate(currentSpeedMetersPerSecond, state.speedMetersPerSecond);
-        // // final double driveOutput = driveController.calculate(0d, 0d);
-        // final double driveFeedForward = driveFF.calculate(state.speedMetersPerSecond);
-        // driveMotor.setVoltage(driveOutput + driveFeedForward);
-        thinkingSpeed = (state.speedMetersPerSecond / DrivetrainConstants.MAX_SPEED); // METERS PER SECOND
-        driveMotor.set( thinkingSpeed * 0.3 );
+        //TODO replace this with a PID loop
+        thinkingSpeed = (state.speedMetersPerSecond / DrivetrainConstants.MAX_SPEED); // convert meters per second to a range from -1 to 1
+        driveMotor.set( thinkingSpeed * 0.3 ); // Limit speed to 30% (remove later)
 
-        final double turnOutput = turnController.calculate(currentRotation.getRadians(), state.angle.getRadians());
-        final double turnFeedForward = turnFF.calculate(turnController.getSetpoint().velocity);
+        final double turnOutput = turnController.calculate(currentRotation.getRadians(), state.angle.getRadians()); // Get the optimal voltage output to turn to the specified rotation
+        final double turnFeedForward = turnFF.calculate(turnController.getSetpoint().velocity); // Caculate the feedforward
         angleMotor.setVoltage(turnOutput + turnFeedForward);
 
     }
-
+    /** 
+     * @return      A state made up of the current speed and cancoder position
+     */
     public SwerveModuleState getState() {
         return new SwerveModuleState(driveMotor.getSelectedSensorPosition(), new Rotation2d(canCoder.getAbsolutePosition()));
     }
