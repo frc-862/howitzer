@@ -16,12 +16,14 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
 
-    // private final PIDController xPidController = new PIDController(kp, ki, kd);
-    // private final PIDController yPidController = new PIDController(kp, ki, kd);
+    private final PIDController xPidController;
+    private final PIDController yPidController;
+    private final ProfiledPIDController thetaPidController;
 
     public final SwerveModule[] modules;
     private final SwerveDriveOdometry odometry;
@@ -65,6 +67,14 @@ public class Drivetrain extends SubsystemBase {
                 DrivetrainConstants.BACK_LEFT_POS, DrivetrainConstants.BACK_RIGHT_POS);
 
         odometry = new SwerveDriveOdometry(kinematics, getHeading());
+
+        double kp = 2.76E-7;
+        double ki = 0;
+        double kd = 0;
+        
+        xPidController = new PIDController(kp, ki, kd);
+        yPidController = new PIDController(kp, ki, kd);
+        thetaPidController = new ProfiledPIDController(50.0, ki, kd, new TrapezoidProfile.Constraints(DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCEL));
 
         Shuffleboard.getTab("Drivetrain").addNumber("Front Left CANCoder", () -> modules[0].getAngle().getDegrees());
         Shuffleboard.getTab("Drivetrain").addNumber("Front Right CANCoder", () -> modules[1].getAngle().getDegrees());
@@ -148,15 +158,15 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public PIDController getXPidController() {
-        return null;
+        return xPidController;
     }
 
     public PIDController getYPidController() {
-        return null;
+        return yPidController;
     }
 
     public ProfiledPIDController getThetaPidController() {
-        return null;
+        return thetaPidController;
     }
 
     public void stop() {

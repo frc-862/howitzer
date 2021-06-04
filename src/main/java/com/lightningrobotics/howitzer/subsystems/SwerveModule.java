@@ -87,7 +87,7 @@ public class SwerveModule {
         // final double driveFeedForward = driveFF.calculate(state.speedMetersPerSecond);
         // driveMotor.setVoltage(driveOutput + driveFeedForward);
         thinkingSpeed = (state.speedMetersPerSecond / DrivetrainConstants.MAX_SPEED); // METERS PER SECOND
-        driveMotor.set( thinkingSpeed * 0.3 );
+        driveMotor.set( thinkingSpeed * 0.5 );
 
         final double turnOutput = turnController.calculate(currentRotation.getRadians(), state.angle.getRadians());
         final double turnFeedForward = turnFF.calculate(turnController.getSetpoint().velocity);

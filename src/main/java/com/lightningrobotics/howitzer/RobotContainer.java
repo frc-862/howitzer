@@ -32,13 +32,9 @@ public class RobotContainer extends LightningContainer {
     
 
     @Override
-    protected void configureAutonomousCommands() 
-    {
-        // Autonomous.register("Forward", new TestPathCommand().getCommand(drivetrain, 
-        //     Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d()))));
-
-        // Autonomous.register("Backward", new TestPathCommand().getCommand(drivetrain, 
-        //     Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(-1d, 0d, new Rotation2d()))));
+    protected void configureAutonomousCommands() {
+        Autonomous.register("Forward", new TestPathCommand().getCommand(drivetrain, Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, 0d, new Rotation2d()))));
+        Autonomous.register("Test 2", new TestPathCommand().getCommand(drivetrain, Arrays.asList(new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(1d, -1d, Rotation2d.fromDegrees(-90)))));
     }
 
     @Override
