@@ -56,6 +56,46 @@ public class SwerveKinematics {
 
     }
 
+    public DrivetrainSpeed forward(Rotation2d theta) {
+
+        // TODO this is a lot of math that should probably be reviewed
+        var FL = states[Drivetrain.Modules.FRONT_LEFT.getIdx()];
+        var FR = states[Drivetrain.Modules.FRONT_RIGHT.getIdx()];
+        var BL = states[Drivetrain.Modules.BACK_LEFT.getIdx()];
+        var BR = states[Drivetrain.Modules.BACK_RIGHT.getIdx()];
+
+        var BFL = FL.angle.getSin() * FL.velocity;
+        var DFL = FL.angle.getCos() * FL.velocity;
+        var BFR = FR.angle.getSin() * FR.velocity;
+        var CFR = FR.angle.getCos() * FR.velocity;
+        var ARL = BL.angle.getSin() * BL.velocity;
+        var DRL = BL.angle.getCos() * BL.velocity;
+        var ARR = BR.angle.getSin() * BR.velocity;
+        var CRL = BR.angle.getCos() * BR.velocity;
+
+        var A = (ARR + ARL) / 2d;
+        var B = (BFL + BFR) / 2d;
+        var C = (CFR + CRL) / 2d;
+        var D = (DFL + DRL) / 2d;
+        
+        var ROT1 = (B - A) / wb.L;
+        var ROT2 = (C - D) / wb.W;
+        var ROT = (ROT1 + ROT2) / 2d;
+
+        var FWD1 = ROT * (wb.L / 2d) + A;
+        var FWD2 = -ROT * (wb.L / 2d) + B;
+        var FWD = (FWD1 + FWD2) / 2d;
+
+        var STR1 = ROT * (wb.W / 2d) + C;
+        var STR2 = -ROT * (wb.W / 2d) + D;
+        var STR = (STR1 + STR2) / 2d;
+
+        var speed = DrivetrainSpeed.fromFieldCentricSpeed(FWD, STR, ROT, theta);
+
+        return speed;
+
+    }
+
     public SwerveModuleState[] getStates() {
         return states;
     }
