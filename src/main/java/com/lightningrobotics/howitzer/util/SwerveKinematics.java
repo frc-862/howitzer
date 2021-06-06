@@ -22,6 +22,8 @@ public class SwerveKinematics {
 
     private SwerveModuleState[] states;
 
+    private DrivetrainSpeed speed;
+
     public SwerveKinematics(double width, double length) {
         this.wb = new Wheelbase(width, length);
         this.states = new SwerveModuleState[DrivetrainConstants.NUM_MODULES];
@@ -56,7 +58,7 @@ public class SwerveKinematics {
 
     }
 
-    public DrivetrainSpeed forward(Rotation2d theta) {
+    public DrivetrainSpeed forward(SwerveModuleState[] states, Rotation2d theta) {
 
         // TODO this is a lot of math that should probably be reviewed
         var FL = states[Drivetrain.Modules.FRONT_LEFT.getIdx()];
@@ -66,10 +68,13 @@ public class SwerveKinematics {
 
         var BFL = FL.angle.getSin() * FL.velocity;
         var DFL = FL.angle.getCos() * FL.velocity;
+
         var BFR = FR.angle.getSin() * FR.velocity;
         var CFR = FR.angle.getCos() * FR.velocity;
+
         var ARL = BL.angle.getSin() * BL.velocity;
         var DRL = BL.angle.getCos() * BL.velocity;
+        
         var ARR = BR.angle.getSin() * BR.velocity;
         var CRL = BR.angle.getCos() * BR.velocity;
 
@@ -92,12 +97,18 @@ public class SwerveKinematics {
 
         var speed = DrivetrainSpeed.fromFieldCentricSpeed(FWD, STR, ROT, theta);
 
+        this.speed = speed;
+
         return speed;
 
     }
 
     public SwerveModuleState[] getStates() {
         return states;
+    }
+
+    public DrivetrainSpeed getSpeed() {
+        return speed;
     }
 
 }

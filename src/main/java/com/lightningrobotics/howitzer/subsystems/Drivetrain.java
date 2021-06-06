@@ -4,18 +4,22 @@
 
 package com.lightningrobotics.howitzer.subsystems;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+
 import com.lightningrobotics.howitzer.Constants.ModuleConstants;
 import com.lightningrobotics.howitzer.Constants.RobotMap;
 import com.lightningrobotics.howitzer.Constants.Wheelbase;
 import com.lightningrobotics.howitzer.util.SwerveKinematics;
 import com.lightningrobotics.howitzer.util.DrivetrainSpeed;
 import com.lightningrobotics.howitzer.util.SwerveModuleState;
+import com.lightningrobotics.howitzer.util.SwerveOdometry;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,7 +44,12 @@ public class Drivetrain extends SubsystemBase {
 
 	private final SwerveKinematics kinematics;
 
-	public Drivetrain() {
+	private final SwerveOdometry odometry;
+
+	private final Supplier<Rotation2d> heading;
+
+	public Drivetrain(Supplier<Rotation2d> heading) {
+		this.heading = heading;
 		modules = new SwerveModule[] {
 			makeSwerveModule(Modules.FRONT_LEFT, RobotMap.FRONT_LEFT_DRIVE_MOTOR, RobotMap.FRONT_LEFT_ANGLE_MOTOR, RobotMap.FRONT_LEFT_CANCODER, Rotation2d.fromDegrees(-95.09765625)),
 			makeSwerveModule(Modules.FRONT_RIGHT, RobotMap.FRONT_RIGHT_DRIVE_MOTOR, RobotMap.FRONT_RIGHT_ANGLE_MOTOR, RobotMap.FRONT_RIGHT_CANCODER, Rotation2d.fromDegrees(-12.744140625)),
@@ -48,6 +57,13 @@ public class Drivetrain extends SubsystemBase {
 			makeSwerveModule(Modules.BACK_RIGHT, RobotMap.BACK_RIGHT_DRIVE_MOTOR, RobotMap.BACK_RIGHT_ANGLE_MOTOR, RobotMap.BACK_RIGHT_CANCODER, Rotation2d.fromDegrees(119.00390625))
 		};
 		kinematics = new SwerveKinematics(Wheelbase.W, Wheelbase.L);
+		odometry = new SwerveOdometry(kinematics, heading.get());
+	}
+
+	@Override
+	public void periodic() {
+		super.periodic();
+		odometry.update(heading.get(), getStates());
 	}
 	
 	public void setModuleStates(SwerveModuleState[] states) {
@@ -97,6 +113,10 @@ public class Drivetrain extends SubsystemBase {
 			ModuleConstants.ANGLE_CONTROLLER
 		);
 
+	}
+
+	public SwerveModuleState[] getStates() {
+		return null;
 	}
 	
 }
