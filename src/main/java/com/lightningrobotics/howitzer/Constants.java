@@ -1,9 +1,14 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package com.lightningrobotics.howitzer;
 
-import edu.wpi.first.wpilibj.geometry.Translation2d;
+import com.lightningrobotics.howitzer.controller.PIDFController;
+
 import edu.wpi.first.wpilibj.util.Units;
 
-public class Constants {
+public final class Constants {
 
     public static class RobotMap {
         public static final int FRONT_LEFT_DRIVE_MOTOR = 8;
@@ -29,17 +34,31 @@ public class Constants {
         public static final double ANGLE_P = 7.5; // TODO need to be better
         public static final double ANGLE_I = 0.05;
         public static final double ANGLE_D = 0.1;
+        public static final double ANGLE_F = 0.1;
         public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
+
+        public static final PIDFController DRIVE_CONTROLLER = new PIDFController(DRIVE_P, DRIVE_I, DRIVE_D, DRIVE_F);
+        public static final PIDFController ANGLE_CONTROLLER = new PIDFController(ANGLE_P, ANGLE_I, ANGLE_D, ANGLE_F);
+
     }
 
     public static class DrivetrainConstants {
-        public static final double MAX_SPEED = Units.feetToMeters(13.6); // this should be in feet/sec //Units.feetToMeters(13.6); // TODO - 10 for now, figure out later - 13.6 feet per second?
-        public static final double MAX_ANGULAR_SPEED = Math.PI; //Math.PI; // 1/2 rotation per second
+        public static final int NUM_MODULES = 4;
+
+        // NOTE that in a perfect world, these two would be the same thing as we would be comfortable driving as fast as possible
+        public static final double MAX_SPEED = Units.feetToMeters(5.5); // Max speed we WANT the robot to go
+        public static final double REAL_MAX_SPEED = Units.feetToMeters(16.2); // Max speed the robot CAN go
+
+        public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second, pi rad/sec
         public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;
-        public static final Translation2d FRONT_LEFT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(11.25));
-        public static final Translation2d FRONT_RIGHT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(-11.25));
-        public static final Translation2d BACK_LEFT_POS = new Translation2d(Units.inchesToMeters(-11.25), Units.inchesToMeters(11.25));
-        public static final Translation2d BACK_RIGHT_POS = new Translation2d(Units.inchesToMeters(-11.25), Units.inchesToMeters(-11.25));
+    }
+
+    public static class Wheelbase {
+        public static final double W = Units.inchesToMeters(22.5); // Width
+        public static final double L = Units.inchesToMeters(22.5); // Length
+        public static final double R = Math.sqrt((W * W) + (L * L)); // Diagonal
+        public static final double WHEEL_CIRCUMFERENCE = Units.inchesToMeters(4d) * Math.PI;
+        public static final double GEARING = 6.86d;
     }
 
     public static class JoystickConstants {
