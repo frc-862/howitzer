@@ -58,7 +58,7 @@ public class SwerveKinematics {
 
     }
 
-    public DrivetrainSpeed forward(SwerveModuleState[] states, Rotation2d theta) {
+    public DrivetrainSpeed forward(SwerveModuleState[] states) {
 
         // TODO this is a lot of math that should probably be reviewed
         var FL = states[Drivetrain.Modules.FRONT_LEFT.getIdx()];
@@ -95,7 +95,8 @@ public class SwerveKinematics {
         var STR2 = -ROT * (wb.W / 2d) + D;
         var STR = (STR1 + STR2) / 2d;
 
-        var speed = DrivetrainSpeed.fromFieldCentricSpeed(FWD, STR, ROT, theta);
+        // Might need to make from field centric speed.
+        var speed = new DrivetrainSpeed(FWD, STR, ROT);
 
         this.speed = speed;
 

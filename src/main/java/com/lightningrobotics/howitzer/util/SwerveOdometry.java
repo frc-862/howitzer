@@ -48,7 +48,7 @@ public class SwerveOdometry extends SubsystemBase {
         
         var theta = heading.plus(headingOffset);
 
-        var ds = kinematics.forward(moduleStates, heading); // TODO theta?
+        var ds = kinematics.forward(moduleStates);
 
         var twist = new Twist2d(ds.vx * elapsed, ds.vy * elapsed, theta.minus(previousAngle).getRadians());
         var next = pose.exp(twist);
