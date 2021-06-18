@@ -28,17 +28,17 @@ public final class Constants {
 
     public static class ModuleConstants {
 
-        public static final double DRIVE_P = 0.0;
-        public static final double DRIVE_I = 0.0;
-        public static final double DRIVE_D = 0.0;
+        public static final double DRIVE_P = 0.22;
+        public static final double DRIVE_I = 0.22;
+        public static final double DRIVE_D = 0.001;
         public static final double DRIVE_F = 0.0;
         public static final PIDFController DRIVE_CONTROLLER = new PIDFController(DRIVE_P, DRIVE_I, DRIVE_D, DRIVE_F);
 
-        public static final double ANGLE_P = 0.0;
-        public static final double ANGLE_I = 0.0;
-        public static final double ANGLE_D = 0.0;
-        public static final double ANGLE_F = 0.0;
-        public static final PIDFController ANGLE_CONTROLLER = new PIDFController(ANGLE_P, ANGLE_I, ANGLE_D, ANGLE_F);
+        public static final double AZIMUTH_P = 0.3;
+        public static final double AZIMUTH_I = 0.1;
+        public static final double AZIMUTH_D = 0.0005;
+        public static final double AZIMUTH_F = 0.054;
+        public static final PIDFController AZIMUTH_CONTROLLER = new PIDFController(AZIMUTH_P, AZIMUTH_I, AZIMUTH_D, AZIMUTH_F);
 
         public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
 
@@ -49,7 +49,7 @@ public final class Constants {
 
         // NOTE that in a perfect world, these two would be the same thing as we would be comfortable driving as fast as possible
         public static final double MAX_SPEED = Units.feetToMeters(5.5); // Max speed we WANT the robot to go
-        public static final double REAL_MAX_SPEED = Units.feetToMeters(16.2); // Max speed the robot CAN go
+        public static final double REAL_MAX_SPEED = Units.feetToMeters(15.0); // Units.feetToMeters(16.2); // Max speed the robot CAN go
 
         public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second, pi rad/sec
         public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;

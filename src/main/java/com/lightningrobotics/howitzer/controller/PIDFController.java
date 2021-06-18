@@ -7,12 +7,12 @@ import com.lightningrobotics.howitzer.util.UtilMath;
  */
 public class PIDFController {
     
-    private final double kP;
-    private final double kI;
-    private final double kD;
-    private final double kF;
+    private double kP;
+    private double kI;
+    private double kD;
+    private double kF;
 
-    private final double period;
+    private double period;
 
     private boolean continuous = false;
     private double maximumInput;
@@ -79,5 +79,39 @@ public class PIDFController {
         prevError = 0;
         acculumatedError = 0;
     }
+
+    public double getkP() {
+        return kP;
+    }
+
+    public void setkP(double kP) {
+        this.kP = kP;
+    }
+
+    public double getkI() {
+        return kI;
+    }
+
+    public void setkI(double kI) {
+        this.kI = kI;
+    }
+
+    public double getkD() {
+        return kD;
+    }
+
+    public void setkD(double kD) {
+        this.kD = kD;
+    }
+
+    public double getkF() {
+        return kF;
+    }
+
+    public void setkF(double kF) {
+        this.kF = kF;
+    }
+
+    
 
 }

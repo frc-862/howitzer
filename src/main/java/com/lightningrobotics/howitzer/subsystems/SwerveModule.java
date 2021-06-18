@@ -18,8 +18,12 @@ public class SwerveModule {
     private final PIDFController driveController;
     private final PIDFController angleController;
 
-    public SwerveModule(SpeedController driveMotor, SpeedController angleMotor, Supplier<Rotation2d> moduleAngle,
-            DoubleSupplier driveMotorVelocity, PIDFController driveController, PIDFController angleController) {
+    public SwerveModule(SpeedController driveMotor, 
+                        SpeedController angleMotor, 
+                        Supplier<Rotation2d> moduleAngle,
+                        DoubleSupplier driveMotorVelocity, 
+                        PIDFController driveController, 
+                        PIDFController angleController) {
 
         this.driveMotor = driveMotor;
         this.angleMotor = angleMotor;
@@ -53,6 +57,14 @@ public class SwerveModule {
         final var angle = angleController.calculate(getModuleAngle().getRadians(), state.angle.getRadians());
         angleMotor.set(angle);
 
+    }
+
+    public void setRawAzimuthPower(double pwr) {
+        angleMotor.set(pwr);
+    }
+
+    public void setRawDrivePower(double pwr) {
+        driveMotor.set(pwr);
     }
 
     public SwerveModuleState getState() {

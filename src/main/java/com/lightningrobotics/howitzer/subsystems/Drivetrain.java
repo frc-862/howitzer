@@ -40,7 +40,7 @@ public class Drivetrain extends SubsystemBase {
 		}
 	}
 
-	private final SwerveModule[] modules;
+	public final SwerveModule[] modules;
 
 	private final SwerveKinematics kinematics;
 
@@ -64,10 +64,10 @@ public class Drivetrain extends SubsystemBase {
 		odometry = new SwerveOdometry(kinematics, imu.getHeading());
 
 		states = new SwerveModuleState[]{
-			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d)),
-			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d)),
-			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d)),
-			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d))
+			new SwerveModuleState(0d, modules[Modules.FRONT_LEFT.getIdx()].getModuleAngle()),
+			new SwerveModuleState(0d, modules[Modules.FRONT_RIGHT.getIdx()].getModuleAngle()),
+			new SwerveModuleState(0d, modules[Modules.BACK_LEFT.getIdx()].getModuleAngle()),
+			new SwerveModuleState(0d, modules[Modules.BACK_RIGHT.getIdx()].getModuleAngle())
 		};
 
 		speed = new DrivetrainSpeed();
@@ -98,6 +98,7 @@ public class Drivetrain extends SubsystemBase {
 	}
 	
 	public void setModuleStates(SwerveModuleState[] states) {
+		this.states = states;
 		for (var i = 0 ; i < states.length ; ++i) {
             SwerveModule module = modules[i];
             SwerveModuleState state = states[i];
@@ -107,8 +108,7 @@ public class Drivetrain extends SubsystemBase {
 
 	public void drive(DrivetrainSpeed speed) {
 		this.speed = speed;
-		states = kinematics.inverse(speed);
-		// setModuleStates(states);
+		setModuleStates(kinematics.inverse(speed));
 	}
 
 	public void stop() {
@@ -123,7 +123,7 @@ public class Drivetrain extends SubsystemBase {
         driveMotor.setNeutralMode(NeutralMode.Brake);
 
 		// Set Up Angle Motor
-		WPI_TalonFX angleMotor = new WPI_TalonFX(driveID);
+		WPI_TalonFX angleMotor = new WPI_TalonFX(angleID);
 		angleMotor.configFactoryDefault();
         angleMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -142,7 +142,7 @@ public class Drivetrain extends SubsystemBase {
 			() -> Rotation2d.fromDegrees(canCoder.getAbsolutePosition()),
 			() -> (((double) driveMotor.getSelectedSensorVelocity() * 10) / (2048.0 * Wheelbase.GEARING)) * Wheelbase.WHEEL_CIRCUMFERENCE, // m/s
 			ModuleConstants.DRIVE_CONTROLLER,
-			ModuleConstants.ANGLE_CONTROLLER
+			ModuleConstants.AZIMUTH_CONTROLLER
 		);
 
 	}
