@@ -20,4 +20,9 @@ public class SwerveModuleState {
         return target;
     }
 
+    @Override
+    public String toString() {
+        return "Velocity: " + velocity + " | Angle: " + angle.getDegrees();
+    }
+
 }

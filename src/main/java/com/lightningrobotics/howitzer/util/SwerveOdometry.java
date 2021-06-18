@@ -3,10 +3,9 @@ package com.lightningrobotics.howitzer.util;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Twist2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.WPIUtilJNI;
 
-public class SwerveOdometry extends SubsystemBase {
+public class SwerveOdometry {
 
     private final SwerveKinematics kinematics;
 

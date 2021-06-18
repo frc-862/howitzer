@@ -27,18 +27,20 @@ public final class Constants {
     }
 
     public static class ModuleConstants {
-        public static final double DRIVE_P = 15.0;
-        public static final double DRIVE_I = 0.01;
-        public static final double DRIVE_D = 0.1;
-        public static final double DRIVE_F = 0.2;
-        public static final double ANGLE_P = 7.5; // TODO need to be better
-        public static final double ANGLE_I = 0.05;
-        public static final double ANGLE_D = 0.1;
-        public static final double ANGLE_F = 0.1;
-        public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
 
+        public static final double DRIVE_P = 0.0;
+        public static final double DRIVE_I = 0.0;
+        public static final double DRIVE_D = 0.0;
+        public static final double DRIVE_F = 0.0;
         public static final PIDFController DRIVE_CONTROLLER = new PIDFController(DRIVE_P, DRIVE_I, DRIVE_D, DRIVE_F);
+
+        public static final double ANGLE_P = 0.0;
+        public static final double ANGLE_I = 0.0;
+        public static final double ANGLE_D = 0.0;
+        public static final double ANGLE_F = 0.0;
         public static final PIDFController ANGLE_CONTROLLER = new PIDFController(ANGLE_P, ANGLE_I, ANGLE_D, ANGLE_F);
+
+        public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
 
     }
 

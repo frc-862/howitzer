@@ -58,4 +58,9 @@ public class DrivetrainSpeed {
         return new DrivetrainSpeed(xSpeed, ySpeed, omega);
     }
 
+    @Override
+    public String toString() {
+        return "X: " + vx + " | Y: " + vy + " | ROT: " + omega;
+    }
+
 }

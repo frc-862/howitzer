@@ -4,8 +4,6 @@
 
 package com.lightningrobotics.howitzer.subsystems;
 
-import java.util.function.Supplier;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -18,10 +16,12 @@ import com.lightningrobotics.howitzer.Constants.RobotMap;
 import com.lightningrobotics.howitzer.Constants.Wheelbase;
 import com.lightningrobotics.howitzer.util.SwerveKinematics;
 import com.lightningrobotics.howitzer.util.DrivetrainSpeed;
+import com.lightningrobotics.howitzer.util.LightningIMU;
 import com.lightningrobotics.howitzer.util.SwerveModuleState;
 import com.lightningrobotics.howitzer.util.SwerveOdometry;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -46,10 +46,14 @@ public class Drivetrain extends SubsystemBase {
 
 	private final SwerveOdometry odometry;
 
-	private final Supplier<Rotation2d> heading;
+	private final LightningIMU imu;
 
-	public Drivetrain(Supplier<Rotation2d> heading) {
-		this.heading = heading;
+	private SwerveModuleState[] states;
+
+	private DrivetrainSpeed speed;
+
+	public Drivetrain(LightningIMU imu) {
+		this.imu = imu;
 		modules = new SwerveModule[] {
 			makeSwerveModule(Modules.FRONT_LEFT, RobotMap.FRONT_LEFT_DRIVE_MOTOR, RobotMap.FRONT_LEFT_ANGLE_MOTOR, RobotMap.FRONT_LEFT_CANCODER, Rotation2d.fromDegrees(-95.09765625)),
 			makeSwerveModule(Modules.FRONT_RIGHT, RobotMap.FRONT_RIGHT_DRIVE_MOTOR, RobotMap.FRONT_RIGHT_ANGLE_MOTOR, RobotMap.FRONT_RIGHT_CANCODER, Rotation2d.fromDegrees(-12.744140625)),
@@ -57,13 +61,40 @@ public class Drivetrain extends SubsystemBase {
 			makeSwerveModule(Modules.BACK_RIGHT, RobotMap.BACK_RIGHT_DRIVE_MOTOR, RobotMap.BACK_RIGHT_ANGLE_MOTOR, RobotMap.BACK_RIGHT_CANCODER, Rotation2d.fromDegrees(119.00390625))
 		};
 		kinematics = new SwerveKinematics(Wheelbase.W, Wheelbase.L);
-		odometry = new SwerveOdometry(kinematics, heading.get());
+		odometry = new SwerveOdometry(kinematics, imu.getHeading());
+
+		states = new SwerveModuleState[]{
+			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d)),
+			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d)),
+			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d)),
+			new SwerveModuleState(0d, Rotation2d.fromDegrees(0d))
+		};
+
+		speed = new DrivetrainSpeed();
+
+		var tab = Shuffleboard.getTab("Swerve Module States");
+
+		tab.addString("FL Real", () -> modules[Modules.FRONT_LEFT.getIdx()].getState().toString());
+		tab.addString("FL Target", () -> states[Modules.FRONT_LEFT.getIdx()].toString());
+
+		tab.addString("FR Real", () -> modules[Modules.FRONT_RIGHT.getIdx()].getState().toString());
+		tab.addString("FR Target", () -> states[Modules.FRONT_RIGHT.getIdx()].toString());
+
+		tab.addString("BL Real", () -> modules[Modules.BACK_LEFT.getIdx()].getState().toString());
+		tab.addString("BL Target", () -> states[Modules.BACK_LEFT.getIdx()].toString());
+
+		tab.addString("BR Real", () -> modules[Modules.BACK_RIGHT.getIdx()].getState().toString());
+		tab.addString("BR Target", () -> states[Modules.BACK_RIGHT.getIdx()].toString());
+
+		tab.addString("Target Speed", () -> speed.toString());
+		tab.addString("Real Speed", () -> kinematics.forward(getStates()).toString());
+
 	}
 
 	@Override
 	public void periodic() {
 		super.periodic();
-		odometry.update(heading.get(), getStates());
+		odometry.update(imu.getHeading(), getStates());
 	}
 	
 	public void setModuleStates(SwerveModuleState[] states) {
@@ -75,8 +106,9 @@ public class Drivetrain extends SubsystemBase {
     }
 
 	public void drive(DrivetrainSpeed speed) {
-		var states = kinematics.inverse(speed);
-		setModuleStates(states);
+		this.speed = speed;
+		states = kinematics.inverse(speed);
+		// setModuleStates(states);
 	}
 
 	public void stop() {
@@ -116,7 +148,12 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public SwerveModuleState[] getStates() {
-		return null;
+		return new SwerveModuleState[]{
+			modules[Modules.FRONT_LEFT.getIdx()].getState(),
+			modules[Modules.FRONT_RIGHT.getIdx()].getState(),
+			modules[Modules.BACK_LEFT.getIdx()].getState(),
+			modules[Modules.BACK_RIGHT.getIdx()].getState()
+		};
 	}
 	
 }

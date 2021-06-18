@@ -20,7 +20,8 @@ public class RobotContainer extends LightningContainer {
 	private static final XboxController controller = new XboxController(JoystickConstants.DRIVER_CONTROLLER);
 
 	private static final LightningIMU imu = LightningIMU.pigeon(RobotMap.PIGEON);
-	private static final Drivetrain drivetrain = new Drivetrain(imu.heading());
+	
+	private static final Drivetrain drivetrain = new Drivetrain(imu);
 
 	@Override
 	protected void configureDefaultCommands() {
