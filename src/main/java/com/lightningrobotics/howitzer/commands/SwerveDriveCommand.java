@@ -31,8 +31,8 @@ public class SwerveDriveCommand extends CommandBase {
     public void execute() {
 
         // Get filtered joystick input
-        final var xInput    = filter.filter(-controller.getY( GenericHID.Hand.kLeft  ));
-        final var yInput    = filter.filter(-controller.getX( GenericHID.Hand.kLeft  ));
+        final var xInput    = filter.filter(-controller.getX( GenericHID.Hand.kLeft  ));
+        final var yInput    = filter.filter(-controller.getY( GenericHID.Hand.kLeft  ));
         final var rotInput  = filter.filter(-controller.getX( GenericHID.Hand.kRight )); 
 
         // Scale joystick input to robot speed

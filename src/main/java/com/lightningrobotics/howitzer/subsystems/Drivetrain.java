@@ -44,16 +44,11 @@ public class Drivetrain extends SubsystemBase {
 
 	private final SwerveKinematics kinematics;
 
-	private final SwerveOdometry odometry;
-
-	private final LightningIMU imu;
-
 	private SwerveModuleState[] states;
 
 	private DrivetrainSpeed speed;
 
-	public Drivetrain(LightningIMU imu) {
-		this.imu = imu;
+	public Drivetrain() {
 		modules = new SwerveModule[] {
 			makeSwerveModule(Modules.FRONT_LEFT, RobotMap.FRONT_LEFT_DRIVE_MOTOR, RobotMap.FRONT_LEFT_ANGLE_MOTOR, RobotMap.FRONT_LEFT_CANCODER, Rotation2d.fromDegrees(-95.09765625)),
 			makeSwerveModule(Modules.FRONT_RIGHT, RobotMap.FRONT_RIGHT_DRIVE_MOTOR, RobotMap.FRONT_RIGHT_ANGLE_MOTOR, RobotMap.FRONT_RIGHT_CANCODER, Rotation2d.fromDegrees(-12.744140625)),
@@ -61,7 +56,6 @@ public class Drivetrain extends SubsystemBase {
 			makeSwerveModule(Modules.BACK_RIGHT, RobotMap.BACK_RIGHT_DRIVE_MOTOR, RobotMap.BACK_RIGHT_ANGLE_MOTOR, RobotMap.BACK_RIGHT_CANCODER, Rotation2d.fromDegrees(119.00390625))
 		};
 		kinematics = new SwerveKinematics(Wheelbase.W, Wheelbase.L);
-		odometry = new SwerveOdometry(kinematics, imu.getHeading());
 
 		states = new SwerveModuleState[]{
 			new SwerveModuleState(0d, modules[Modules.FRONT_LEFT.getIdx()].getModuleAngle()),
@@ -89,12 +83,6 @@ public class Drivetrain extends SubsystemBase {
 		tab.addString("Target Speed", () -> speed.toString());
 		tab.addString("Real Speed", () -> kinematics.forward(getStates()).toString());
 
-	}
-
-	@Override
-	public void periodic() {
-		super.periodic();
-		odometry.update(imu.getHeading(), getStates());
 	}
 	
 	public void setModuleStates(SwerveModuleState[] states) {

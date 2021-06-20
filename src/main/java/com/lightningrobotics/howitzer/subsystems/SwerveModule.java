@@ -37,6 +37,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getModuleAngle() {
+        // TODO need to reverse to make clockwise positive?
         return moduleAngle.get();
     }
 
