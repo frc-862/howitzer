@@ -114,6 +114,7 @@ public class Drivetrain extends SubsystemBase {
 		WPI_TalonFX angleMotor = new WPI_TalonFX(angleID);
 		angleMotor.configFactoryDefault();
         angleMotor.setNeutralMode(NeutralMode.Brake);
+		angleMotor.setInverted(true);
 
 		// Set Up Encoder
 		CANCoder canCoder = new CANCoder(encoderID);
@@ -121,6 +122,7 @@ public class Drivetrain extends SubsystemBase {
         canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
         canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees();
+		canCoderConfiguration.sensorDirection = true;
         canCoder.configAllSettings(canCoderConfiguration);
 		
 		// Build Module

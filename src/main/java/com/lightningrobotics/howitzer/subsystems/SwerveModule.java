@@ -3,6 +3,7 @@ package com.lightningrobotics.howitzer.subsystems;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import com.lightningrobotics.howitzer.Constants.DrivetrainConstants;
 import com.lightningrobotics.howitzer.controller.PIDFController;
 import com.lightningrobotics.howitzer.util.SwerveModuleState;
 
@@ -38,7 +39,7 @@ public class SwerveModule {
 
     public Rotation2d getModuleAngle() {
         // TODO need to reverse to make clockwise positive?
-        return moduleAngle.get();
+        return moduleAngle.get();//.rotateBy(Rotation2d.fromDegrees(180d));
     }
 
     public double getVelocity() {
@@ -51,7 +52,7 @@ public class SwerveModule {
         var state = SwerveModuleState.optimize(target, getModuleAngle());
 
         // Set drive output
-        final var drive = driveController.calculate(getVelocity(), state.velocity);
+        final var drive = state.velocity / DrivetrainConstants.REAL_MAX_SPEED; //driveController.calculate(getVelocity(), state.velocity);
         driveMotor.set(drive);
 
         // Set angle output

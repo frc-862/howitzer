@@ -2,7 +2,7 @@ package com.lightningrobotics.howitzer.util;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
-public class SwerveModuleState {
+public class SwerveModuleState implements Comparable<SwerveModuleState> {
 
     public double velocity;
     public Rotation2d angle;
@@ -23,6 +23,11 @@ public class SwerveModuleState {
     @Override
     public String toString() {
         return "Velocity: " + velocity + " | Angle: " + angle.getDegrees();
+    }
+
+    @Override
+    public int compareTo(SwerveModuleState o) {
+        return Double.compare(this.velocity, o.velocity);
     }
 
 }
