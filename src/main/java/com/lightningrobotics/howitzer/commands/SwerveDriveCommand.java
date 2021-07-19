@@ -32,9 +32,9 @@ public class SwerveDriveCommand extends CommandBase {
     public void execute() {
 
         // Get filtered joystick input
-        final var xInput    = filter.filter(-controller.getX( GenericHID.Hand.kLeft  ));
-        final var yInput    = filter.filter(-controller.getY( GenericHID.Hand.kLeft  ));
-        final var rotInput  = filter.filter(+controller.getX( GenericHID.Hand.kRight )); 
+        final var xInput    = filter.filter(-controller.getY(GenericHID.Hand.kLeft));
+        final var yInput    = filter.filter(+controller.getX(GenericHID.Hand.kLeft));
+        final var rotInput  = filter.filter(+controller.getX(GenericHID.Hand.kRight)); 
 
         // Scale joystick input to robot speed
         var xSpeed    =  xInput   * DrivetrainConstants.MAX_SPEED;
@@ -58,8 +58,8 @@ public class SwerveDriveCommand extends CommandBase {
         SmartDashboard.putString("Target Speed", driveSpeed.toString());
         SmartDashboard.putNumber("Max Linear Speed", DrivetrainConstants.MAX_SPEED);
         SmartDashboard.putNumber("Max Angular Speed", DrivetrainConstants.MAX_ANGULAR_SPEED);
-        SmartDashboard.putNumber("Y Speed", ySpeed);
         SmartDashboard.putNumber("X Speed", xSpeed);
+        SmartDashboard.putNumber("Y Speed", ySpeed);
         SmartDashboard.putNumber("ROT Speed", rotSpeed);
         SmartDashboard.putNumber("Heading", imu.getHeading().getDegrees());
     

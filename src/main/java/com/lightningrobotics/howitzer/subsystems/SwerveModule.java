@@ -38,8 +38,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getModuleAngle() {
-        // TODO need to reverse to make clockwise positive?
-        return moduleAngle.get();//.rotateBy(Rotation2d.fromDegrees(180d));
+        return moduleAngle.get();
     }
 
     public double getVelocity() {
@@ -52,7 +51,8 @@ public class SwerveModule {
         var state = SwerveModuleState.optimize(target, getModuleAngle());
 
         // Set drive output
-        final var drive = state.velocity / DrivetrainConstants.REAL_MAX_SPEED; //driveController.calculate(getVelocity(), state.velocity);
+        final var drive = state.velocity / DrivetrainConstants.REAL_MAX_SPEED; 
+        // final var drive = driveController.calculate(getVelocity(), state.velocity);
         driveMotor.set(drive);
 
         // Set angle output
