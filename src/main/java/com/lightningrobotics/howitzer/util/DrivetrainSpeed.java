@@ -53,8 +53,8 @@ public class DrivetrainSpeed {
      */
     public static DrivetrainSpeed fromFieldCentricSpeed(double vx, double vy, double omega, Rotation2d theta) {
         // Rotate vector <xSpeed, ySpeed> by theta
-        var xSpeed = (vx * theta.getCos()) + (vy * theta.getSin());
-        var ySpeed = (vy * theta.getCos()) - (vx * theta.getSin());
+        var xSpeed =  (vx * theta.getCos()) + (vy * theta.getSin());
+        var ySpeed = -(vx * theta.getSin()) + (vy * theta.getCos());
         return new DrivetrainSpeed(xSpeed, ySpeed, omega);
     }
 

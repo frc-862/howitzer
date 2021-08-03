@@ -43,20 +43,20 @@ public class SwerveKinematics {
         var RL_Angle = Math.atan2(A, D);
         var RR_Angle = Math.atan2(A, C);
 
-        var MAX = UtilMath.max(FR_Speed, FL_Speed, RL_Speed, RR_Speed);
+        var maxWheelSpeed = UtilMath.max(FR_Speed, FL_Speed, RL_Speed, RR_Speed);
 
-        if(MAX > DrivetrainConstants.MAX_SPEED) {
-            FR_Speed /= MAX;
-            FL_Speed /= MAX;
-            RL_Speed /= MAX;
-            RR_Speed /= MAX;
+        if(maxWheelSpeed > DrivetrainConstants.MAX_SPEED) {
+            FR_Speed = (FR_Speed / maxWheelSpeed) * DrivetrainConstants.MAX_SPEED;
+            FL_Speed = (FL_Speed / maxWheelSpeed) * DrivetrainConstants.MAX_SPEED;
+            RL_Speed = (RL_Speed / maxWheelSpeed) * DrivetrainConstants.MAX_SPEED;
+            RR_Speed = (RR_Speed / maxWheelSpeed) * DrivetrainConstants.MAX_SPEED;
         }
 
         return new SwerveModuleState[]{
             new SwerveModuleState(FL_Speed, new Rotation2d(FL_Angle)),
-            new SwerveModuleState(FR_Speed, new Rotation2d(FR_Angle)),
-            new SwerveModuleState(RL_Speed, new Rotation2d(RL_Angle)),
-            new SwerveModuleState(RR_Speed, new Rotation2d(RR_Angle))
+                new SwerveModuleState(FR_Speed, new Rotation2d(FR_Angle)),
+                new SwerveModuleState(RL_Speed, new Rotation2d(RL_Angle)),
+                new SwerveModuleState(RR_Speed, new Rotation2d(RR_Angle))
         };
 
     }

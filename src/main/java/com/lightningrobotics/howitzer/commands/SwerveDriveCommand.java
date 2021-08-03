@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lightning.util.JoystickFilter;
 
 public class SwerveDriveCommand extends CommandBase {
-    
+
     private final Drivetrain drivetrain;
     private final LightningIMU imu;
     private final XboxController controller;
@@ -25,16 +25,23 @@ public class SwerveDriveCommand extends CommandBase {
         addRequirements(drivetrain); // we do not add IMU as a requirement because it's use is read-only
         this.controller = controller;
         this.fieldCentric = fieldCentric;
-        this.filter = new JoystickFilter(0.1d, 0.1d, 1d, JoystickFilter.Mode.CUBED);
+        this.filter = new JoystickFilter(0.05d, 0d, 1d, JoystickFilter.Mode.CUBED);
     }
 
     @Override
     public void execute() {
 
         // Get filtered joystick input
-        final var xInput    = filter.filter(-controller.getY(GenericHID.Hand.kLeft));
-        final var yInput    = filter.filter(+controller.getX(GenericHID.Hand.kLeft));
-        final var rotInput  = filter.filter(+controller.getX(GenericHID.Hand.kRight)); 
+        var xInput    = filter.filter(-controller.getY(GenericHID.Hand.kLeft));
+        var yInput    = filter.filter(+controller.getX(GenericHID.Hand.kLeft));
+        var rotInput  = filter.filter(+controller.getX(GenericHID.Hand.kRight));
+
+        // Constrain magnitude vector from joysticks to w/in practical range
+        var magnitude = Math.sqrt((xInput * xInput) + (yInput * yInput));
+        if(magnitude > 1d) {
+            xInput = xInput / magnitude;
+            yInput = yInput / magnitude;
+        }
 
         // Scale joystick input to robot speed
         var xSpeed    =  xInput   * DrivetrainConstants.MAX_SPEED;
@@ -42,7 +49,7 @@ public class SwerveDriveCommand extends CommandBase {
         var rotSpeed  =  rotInput * DrivetrainConstants.MAX_ANGULAR_SPEED;
 
         // Placeholder for drive speed
-        DrivetrainSpeed driveSpeed;
+        DrivetrainSpeed driveSpeed = null;
 
         // Convert to field centric if necessary
         if(fieldCentric) {
@@ -51,18 +58,22 @@ public class SwerveDriveCommand extends CommandBase {
         } else {
             driveSpeed = new DrivetrainSpeed(xSpeed, ySpeed, rotSpeed);
         }
-        
+
         // Set drive speed
         drivetrain.drive(driveSpeed);
 
         SmartDashboard.putString("Target Speed", driveSpeed.toString());
+        SmartDashboard.putString("Real Speed", drivetrain.getKinematics().forward(drivetrain.getStates()).toString());
         SmartDashboard.putNumber("Max Linear Speed", DrivetrainConstants.MAX_SPEED);
         SmartDashboard.putNumber("Max Angular Speed", DrivetrainConstants.MAX_ANGULAR_SPEED);
         SmartDashboard.putNumber("X Speed", xSpeed);
         SmartDashboard.putNumber("Y Speed", ySpeed);
         SmartDashboard.putNumber("ROT Speed", rotSpeed);
+        SmartDashboard.putNumber("X Input", xInput);
+        SmartDashboard.putNumber("Y Input", yInput);
+        SmartDashboard.putNumber("ROT Input", rotInput);
         SmartDashboard.putNumber("Heading", imu.getHeading().getDegrees());
-    
+
     }
 
     @Override
