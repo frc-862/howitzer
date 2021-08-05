@@ -151,7 +151,7 @@ public class Drivetrain extends SubsystemBase {
                 driveMotor,
                 angleMotor,
                 () -> Rotation2d.fromDegrees(canCoder.getAbsolutePosition()),
-                () -> (((double) driveMotor.getSelectedSensorVelocity() * 10) / (2048.0 * Wheelbase.GEARING)) * Wheelbase.WHEEL_CIRCUMFERENCE, // m/s
+                () -> (driveMotor.getSelectedSensorVelocity() * 10d) * (Wheelbase.WHEEL_CIRCUMFERENCE / (2048d * Wheelbase.GEARING)), // m/s
                 ModuleConstants.DRIVE_CONTROLLER,
                 ModuleConstants.AZIMUTH_CONTROLLER
                 );

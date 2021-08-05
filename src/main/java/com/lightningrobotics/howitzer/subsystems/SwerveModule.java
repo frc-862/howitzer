@@ -9,6 +9,7 @@ import com.lightningrobotics.howitzer.util.SwerveModuleState;
 
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Represents a single swerve module with both drive and azimuth control.
@@ -55,6 +56,7 @@ public class SwerveModule {
 
         // Set drive output
         final var drive = state.velocity / DrivetrainConstants.REAL_MAX_SPEED;
+        SmartDashboard.putNumber("Drive Coef", drive);
         // final var drive = driveController.calculate(getVelocity(), state.velocity);
         driveMotor.set(drive);
 

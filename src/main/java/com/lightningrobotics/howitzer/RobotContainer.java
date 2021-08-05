@@ -7,6 +7,8 @@ import com.lightningrobotics.howitzer.subsystems.Drivetrain;
 import com.lightningrobotics.howitzer.util.LightningIMU;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lightning.LightningConfig;
 import frc.lightning.LightningContainer;
 import frc.lightning.subsystems.LightningDrivetrain;
@@ -18,21 +20,24 @@ public class RobotContainer extends LightningContainer {
 
     // ROBOT COMPONENTS
     private static final LightningIMU imu = LightningIMU.pigeon(RobotMap.PIGEON);
-	
+
     // SUBSYSTEMS
     private static final Drivetrain drivetrain = new Drivetrain();
-	
+
     @Override
     protected void configureDefaultCommands() {
         drivetrain.setDefaultCommand(new SwerveDriveCommand(drivetrain, imu, driver, true));
     }
 
     @Override
-    protected void initializeDashboardCommands() { }
+    protected void initializeDashboardCommands() {
+        var tab = Shuffleboard.getTab("Commands");
+        tab.add("Reset Heading", new InstantCommand(imu::reset, imu));
+    }
 
     @Override
     protected void configureAutonomousCommands() { }
-    
+
     @Override
     protected void configureButtonBindings() { }
 
