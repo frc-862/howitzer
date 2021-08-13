@@ -26,6 +26,7 @@ public class ModuleTest extends CommandBase {
     public void execute() {
         module.setRawAzimuthPower(filter.filter(-controller.getX(GenericHID.Hand.kLeft)));
         module.setRawDrivePower(filter.filter(-controller.getX( GenericHID.Hand.kRight)));
+        //module.setRawDrivePower(1d);
     }
 
     @Override
@@ -33,5 +34,5 @@ public class ModuleTest extends CommandBase {
         module.setRawAzimuthPower(0d);
         module.setRawDrivePower(0d);
     }
-    
+
 }

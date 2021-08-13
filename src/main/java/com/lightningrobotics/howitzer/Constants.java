@@ -44,10 +44,11 @@ public final class Constants {
         public static final int NUM_MODULES = 4;
 
         // NOTE that in a perfect world, these two would be the same thing as we would be comfortable driving as fast as possible
-        public static final double MAX_SPEED = Units.feetToMeters(16.2); // Units.feetToMeters(5.5); // Max speed we WANT the robot to go
-        public static final double REAL_MAX_SPEED = Units.feetToMeters(16.2); // Units.feetToMeters(15.0); // Max speed the robot CAN go
+        public static final double MAX_SPEED = 15; //ft/sec //Units.feetToMeters(1); // Units.feetToMeters(5.5); // Max speed we WANT the robot to go
+        public static final double REAL_MAX_SPEED = 17.2; //ft/sec //Units.feetToMeters(16.2); // Units.feetToMeters(15.0); // Max speed the robot CAN go
 
-        public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second, pi rad/sec
+        // TODO these represent the speed of the whole robot when rotating? maybe
+        public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // 2 rotation per second, pi rad/sec
         public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;
     }
 
@@ -55,7 +56,7 @@ public final class Constants {
         public static final double W = Units.inchesToMeters(22.5); // Width
         public static final double L = Units.inchesToMeters(22.5); // Length
         public static final double R = Math.sqrt((W * W) + (L * L)); // Diagonal
-        public static final double WHEEL_CIRCUMFERENCE = Units.inchesToMeters(4d) * Math.PI;
+        public static final double WHEEL_CIRCUMFERENCE = (4d / 12d) * Math.PI; //Units.inchesToMeters(4d) * Math.PI;
         public static final double GEARING = 6.86d;
     }
 

@@ -62,17 +62,17 @@ public class SwerveDriveCommand extends CommandBase {
         // Set drive speed
         drivetrain.drive(driveSpeed);
 
-        SmartDashboard.putString("Target Speed", driveSpeed.toString());
-        SmartDashboard.putString("Real Speed", drivetrain.getKinematics().forward(drivetrain.getStates()).toString());
-        SmartDashboard.putNumber("Max Linear Speed", DrivetrainConstants.MAX_SPEED);
-        SmartDashboard.putNumber("Max Angular Speed", DrivetrainConstants.MAX_ANGULAR_SPEED);
-        SmartDashboard.putNumber("X Speed", xSpeed);
-        SmartDashboard.putNumber("Y Speed", ySpeed);
-        SmartDashboard.putNumber("ROT Speed", rotSpeed);
-        SmartDashboard.putNumber("X Input", xInput);
-        SmartDashboard.putNumber("Y Input", yInput);
-        SmartDashboard.putNumber("ROT Input", rotInput);
-        SmartDashboard.putNumber("Heading", imu.getHeading().getDegrees());
+        //SmartDashboard.putString("Target Speed", driveSpeed.toString());
+        //SmartDashboard.putString("Real Speed", drivetrain.getKinematics().forward(drivetrain.getStates()).toString());
+        //SmartDashboard.putNumber("Max Linear Speed", DrivetrainConstants.MAX_SPEED);
+        //SmartDashboard.putNumber("Max Angular Speed", DrivetrainConstants.MAX_ANGULAR_SPEED);
+        //SmartDashboard.putNumber("X Speed", xSpeed);
+        //SmartDashboard.putNumber("Y Speed", ySpeed);
+        //SmartDashboard.putNumber("ROT Speed", rotSpeed);
+        //SmartDashboard.putNumber("X Input", xInput);
+        //SmartDashboard.putNumber("Y Input", yInput);
+        //SmartDashboard.putNumber("ROT Input", rotInput);
+        //SmartDashboard.putNumber("Heading", imu.getHeading().getDegrees());
 
     }
 
