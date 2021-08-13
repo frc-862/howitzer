@@ -1,9 +1,10 @@
 package com.lightningrobotics.howitzer;
 
-import edu.wpi.first.wpilibj.geometry.Translation2d;
+import com.lightningrobotics.howitzer.controller.PIDFController;
+
 import edu.wpi.first.wpilibj.util.Units;
 
-public class Constants {
+public final class Constants {
 
     public static class RobotMap {
         public static final int FRONT_LEFT_DRIVE_MOTOR = 8;
@@ -22,24 +23,41 @@ public class Constants {
     }
 
     public static class ModuleConstants {
-        public static final double DRIVE_P = 15.0;
-        public static final double DRIVE_I = 0.01;
-        public static final double DRIVE_D = 0.1;
-        public static final double DRIVE_F = 0.2;
-        public static final double ANGLE_P = 7.5; // TODO need to be better
-        public static final double ANGLE_I = 0.05;
-        public static final double ANGLE_D = 0.1;
+
+        public static final double DRIVE_P = 0.22;
+        public static final double DRIVE_I = 0.22;
+        public static final double DRIVE_D = 0.001;
+        public static final double DRIVE_F = 0.0;
+        public static final PIDFController DRIVE_CONTROLLER = new PIDFController(DRIVE_P, DRIVE_I, DRIVE_D, DRIVE_F);
+
+        public static final double AZIMUTH_P = 0.3;
+        public static final double AZIMUTH_I = 0.1;
+        public static final double AZIMUTH_D = 0.0005;
+        public static final double AZIMUTH_F = 0.054;
+        public static final PIDFController AZIMUTH_CONTROLLER = new PIDFController(AZIMUTH_P, AZIMUTH_I, AZIMUTH_D, AZIMUTH_F);
+
         public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
+
     }
 
     public static class DrivetrainConstants {
-        public static final double MAX_SPEED = Units.feetToMeters(13.6); // this should be in feet/sec //Units.feetToMeters(13.6); // TODO - 10 for now, figure out later - 13.6 feet per second?
-        public static final double MAX_ANGULAR_SPEED = Math.PI; //Math.PI; // 1/2 rotation per second
+        public static final int NUM_MODULES = 4;
+
+        // NOTE that in a perfect world, these two would be the same thing as we would be comfortable driving as fast as possible
+        public static final double MAX_SPEED = 15; //ft/sec //Units.feetToMeters(1); // Units.feetToMeters(5.5); // Max speed we WANT the robot to go
+        public static final double REAL_MAX_SPEED = 17.2; //ft/sec //Units.feetToMeters(16.2); // Units.feetToMeters(15.0); // Max speed the robot CAN go
+
+        // TODO these represent the speed of the whole robot when rotating? maybe
+        public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // 2 rotation per second, pi rad/sec
         public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;
-        public static final Translation2d FRONT_LEFT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(11.25));
-        public static final Translation2d FRONT_RIGHT_POS = new Translation2d(Units.inchesToMeters(11.25), Units.inchesToMeters(-11.25));
-        public static final Translation2d BACK_LEFT_POS = new Translation2d(Units.inchesToMeters(-11.25), Units.inchesToMeters(11.25));
-        public static final Translation2d BACK_RIGHT_POS = new Translation2d(Units.inchesToMeters(-11.25), Units.inchesToMeters(-11.25));
+    }
+
+    public static class Wheelbase {
+        public static final double W = Units.inchesToMeters(22.5); // Width
+        public static final double L = Units.inchesToMeters(22.5); // Length
+        public static final double R = Math.sqrt((W * W) + (L * L)); // Diagonal
+        public static final double WHEEL_CIRCUMFERENCE = (4d / 12d) * Math.PI; //Units.inchesToMeters(4d) * Math.PI;
+        public static final double GEARING = 6.86d;
     }
 
     public static class JoystickConstants {

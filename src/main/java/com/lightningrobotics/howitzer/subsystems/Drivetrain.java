@@ -1,175 +1,175 @@
 package com.lightningrobotics.howitzer.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.lightningrobotics.howitzer.Constants.DrivetrainConstants;
-import com.lightningrobotics.howitzer.Constants.RobotMap;
-import com.lightningrobotics.howitzer.Constants.ModuleConstants;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
+import com.lightningrobotics.howitzer.Constants.ModuleConstants;
+import com.lightningrobotics.howitzer.Constants.RobotMap;
+import com.lightningrobotics.howitzer.Constants.Wheelbase;
+import com.lightningrobotics.howitzer.util.SwerveKinematics;
+import com.lightningrobotics.howitzer.util.DrivetrainSpeed;
+import com.lightningrobotics.howitzer.util.SwerveModuleState;
+
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
 
-    private final PIDController xPidController;
-    private final PIDController yPidController;
-    private final ProfiledPIDController thetaPidController;
-
-    public final SwerveModule[] modules;
-    private final SwerveDriveOdometry odometry;
-    private final SwerveDriveKinematics kinematics;
-
-    // private final IMU imu;
-    private final PigeonIMU imu;
-    private final PIDController ffController;
-
-    private double[] ypr = new double[3];
-
-    public Drivetrain() {
-
-        modules = new SwerveModule[] {
-                new SwerveModule(new WPI_TalonFX(RobotMap.FRONT_LEFT_DRIVE_MOTOR),
-                        new WPI_TalonFX(RobotMap.FRONT_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_LEFT_CANCODER),
-                        Rotation2d.fromDegrees(-95.09765625)), // Front Left
-                new SwerveModule(new WPI_TalonFX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR),
-                        new WPI_TalonFX(RobotMap.FRONT_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.FRONT_RIGHT_CANCODER),
-                        Rotation2d.fromDegrees(-12.744140625)), // Front Right
-                new SwerveModule(new WPI_TalonFX(RobotMap.BACK_LEFT_DRIVE_MOTOR),
-                        new WPI_TalonFX(RobotMap.BACK_LEFT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_LEFT_CANCODER),
-                        Rotation2d.fromDegrees(30.673828125)), // Back Left
-                new SwerveModule(new WPI_TalonFX(RobotMap.BACK_RIGHT_DRIVE_MOTOR),
-                        new WPI_TalonFX(RobotMap.BACK_RIGHT_ANGLE_MOTOR), new CANCoder(RobotMap.BACK_RIGHT_CANCODER),
-                        Rotation2d.fromDegrees(119.00390625)) // Back Right
-        };
-
-        imu = new PigeonIMU(RobotMap.PIGEON);
-        imu.configFactoryDefault();
-        imu.setYaw(0d);
-        imu.setAccumZAngle(0d);
-        // imu = IMU.pigeon(RobotMap.PIGEON);
-        // imu.reset();
-
-        Shuffleboard.getTab("Drivetrain").addNumber("Heading", () -> getHeading().getDegrees());
-
-        ffController = new PIDController(ModuleConstants.DRIVE_P, ModuleConstants.DRIVE_I, ModuleConstants.DRIVE_D);
-
-        kinematics = new SwerveDriveKinematics(DrivetrainConstants.FRONT_LEFT_POS, DrivetrainConstants.FRONT_RIGHT_POS,
-                DrivetrainConstants.BACK_LEFT_POS, DrivetrainConstants.BACK_RIGHT_POS);
-
-        odometry = new SwerveDriveOdometry(kinematics, getHeading());
-
-        double kp = 2.76E-7;
-        double ki = 0;
-        double kd = 0;
-        
-        xPidController = new PIDController(kp, ki, kd);
-        yPidController = new PIDController(kp, ki, kd);
-        thetaPidController = new ProfiledPIDController(50.0, ki, kd, new TrapezoidProfile.Constraints(DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCEL));
-
-        Shuffleboard.getTab("Drivetrain").addNumber("Front Left CANCoder", () -> modules[0].getAngle().getDegrees());
-        Shuffleboard.getTab("Drivetrain").addNumber("Front Right CANCoder", () -> modules[1].getAngle().getDegrees());
-        Shuffleboard.getTab("Drivetrain").addNumber("Back Left CANCoder", () -> modules[2].getAngle().getDegrees());
-        Shuffleboard.getTab("Drivetrain").addNumber("Back Right CANCoder", () -> modules[3].getAngle().getDegrees());
-
-    }
-
-    @Override
-    public void periodic() {
-        super.periodic();
-        imu.getYawPitchRoll(ypr);
-    }
-
-    public Rotation2d getHeading() {
-        double heading = ypr[0];
-        double sign = Math.signum(heading);
-        double filteredRot = sign * (((Math.abs(heading) + 180) % 360) - 180); 
-        return Rotation2d.fromDegrees(filteredRot);
-    }
-
-    public void setModuleStates(SwerveModuleState[] states) {
-        // SwerveModule module = modules[1];
-        // SwerveModuleState state = states[1];
-        // module.setDesiredState(state);
-
-        for (int i = 0; i < states.length; i++) {
-            SwerveModule module = modules[i];
-            SwerveModuleState state = states[i];
-            module.setDesiredState(state);
+    public enum Modules {
+        FRONT_LEFT(0),
+        FRONT_RIGHT(1),
+        BACK_LEFT(2),
+        BACK_RIGHT(3);
+        private int idx;
+        Modules(int idx) {
+            this.idx = idx;
+        }
+        public int getIdx() {
+            return this.idx;
         }
     }
 
-    /**
-     * Method to drive the robot using joystick info.
-     * 
-     * @param xSpeed        Speed of the robot in the x direction (forward).
-     * @param ySpeed        Speed of the robot in the y direction (sideways).
-     * @param rot           Angular rate of the robot.
-     * @param fieldRelative Whether the provided x and y speeds are relative to the
-     *                      field.
-     */
-    public void drive(double xSpeed, double ySpeed, double rot) {
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
-        SwerveDriveKinematics.normalizeWheelSpeeds(states, DrivetrainConstants.MAX_SPEED);
-        // modules[0].setDesiredState(states[0]);
-        // modules[1].setDesiredState(states[1]);
-        // modules[2].setDesiredState(states[2]);
-        // modules[3].setDesiredState(states[3]);
-        setModuleStates(states);
+    public final SwerveModule[] modules;
+
+    private final SwerveKinematics kinematics;
+
+    private SwerveModuleState[] states;
+
+    private DrivetrainSpeed speed;
+
+    public Drivetrain() {
+
+        // Build modules
+        modules = new SwerveModule[] {
+            makeSwerveModule(
+                    Modules.FRONT_LEFT,
+                    RobotMap.FRONT_LEFT_DRIVE_MOTOR,
+                    RobotMap.FRONT_LEFT_ANGLE_MOTOR,
+                    RobotMap.FRONT_LEFT_CANCODER,
+                    Rotation2d.fromDegrees(-95.09765625)),
+                makeSwerveModule(
+                        Modules.FRONT_RIGHT,
+                        RobotMap.FRONT_RIGHT_DRIVE_MOTOR,
+                        RobotMap.FRONT_RIGHT_ANGLE_MOTOR,
+                        RobotMap.FRONT_RIGHT_CANCODER,
+                        Rotation2d.fromDegrees(-12.744140625)),
+                makeSwerveModule(
+                        Modules.BACK_LEFT,
+                        RobotMap.BACK_LEFT_DRIVE_MOTOR,
+                        RobotMap.BACK_LEFT_ANGLE_MOTOR,
+                        RobotMap.BACK_LEFT_CANCODER,
+                        Rotation2d.fromDegrees(30.673828125)),
+                makeSwerveModule(
+                        Modules.BACK_RIGHT,
+                        RobotMap.BACK_RIGHT_DRIVE_MOTOR,
+                        RobotMap.BACK_RIGHT_ANGLE_MOTOR,
+                        RobotMap.BACK_RIGHT_CANCODER,
+                        Rotation2d.fromDegrees(119.00390625))
+        };
+
+        // Set up kinematics
+        kinematics = new SwerveKinematics(Wheelbase.W, Wheelbase.L);
+
+        // Initialize empty states
+        states = new SwerveModuleState[]{
+            new SwerveModuleState(0d, modules[Modules.FRONT_LEFT.getIdx()].getModuleAngle()),
+                new SwerveModuleState(0d, modules[Modules.FRONT_RIGHT.getIdx()].getModuleAngle()),
+                new SwerveModuleState(0d, modules[Modules.BACK_LEFT.getIdx()].getModuleAngle()),
+                new SwerveModuleState(0d, modules[Modules.BACK_RIGHT.getIdx()].getModuleAngle())
+        };
+
+        // Initialize zero drive speed
+        speed = new DrivetrainSpeed();
+
+        // Put some data on shuffleboard
+        var tab = Shuffleboard.getTab("Swerve Module States");
+
+        tab.addString("FL Real", () -> modules[Modules.FRONT_LEFT.getIdx()].getState().toString());
+        tab.addString("FL Target", () -> states[Modules.FRONT_LEFT.getIdx()].toString());
+
+        tab.addString("FR Real", () -> modules[Modules.FRONT_RIGHT.getIdx()].getState().toString());
+        tab.addString("FR Target", () -> states[Modules.FRONT_RIGHT.getIdx()].toString());
+
+        tab.addString("BL Real", () -> modules[Modules.BACK_LEFT.getIdx()].getState().toString());
+        tab.addString("BL Target", () -> states[Modules.BACK_LEFT.getIdx()].toString());
+
+        tab.addString("BR Real", () -> modules[Modules.BACK_RIGHT.getIdx()].getState().toString());
+        tab.addString("BR Target", () -> states[Modules.BACK_RIGHT.getIdx()].toString());
+
+        tab.addString("Target Speed", () -> speed.toString());
+        tab.addString("Real Speed", () -> kinematics.forward(getStates()).toString());
+
     }
 
-    public void updateOdometry() {
-        odometry.update(getHeading(), modules[0].getState(), modules[1].getState(), modules[2].getState(), modules[3].getState());
+    public void setModuleStates(SwerveModuleState[] states) {
+        this.states = states;
+        for (var i = 0 ; i < states.length ; ++i) {
+            SwerveModule module = modules[i];
+            SwerveModuleState state = states[i];
+            module.setState(state);
+        }
     }
 
-    public Pose2d getOdometryPose2d() {
-        updateOdometry();
-        return odometry.getPoseMeters();
-    }
-
-    public Rotation2d getOdometryRotation2d() {
-        updateOdometry();
-        return odometry.getPoseMeters().getRotation();
-    }
-
-    public SwerveDriveKinematics getKinematics() {
-        return kinematics;
-    }
-
-    public double getMaxVelocity() {
-        return DrivetrainConstants.MAX_SPEED;
-    }
-
-    public double getMaxAcceleration() {
-        return 3d;
-    }
-
-    public PIDController getFeedforward() {
-        return ffController;
-    }
-
-    public PIDController getXPidController() {
-        return xPidController;
-    }
-
-    public PIDController getYPidController() {
-        return yPidController;
-    }
-
-    public ProfiledPIDController getThetaPidController() {
-        return thetaPidController;
+    public void drive(DrivetrainSpeed speed) {
+        this.speed = speed;
+        setModuleStates(kinematics.inverse(speed));
     }
 
     public void stop() {
-        drive(0d, 0d, getHeading().getDegrees());
+        this.drive(new DrivetrainSpeed());
     }
+
+    private SwerveModule makeSwerveModule(Modules module, int driveID, int angleID, int encoderID, Rotation2d offset) {
+
+        // Set Up Drive Motor
+        WPI_TalonFX driveMotor = new WPI_TalonFX(driveID);
+        driveMotor.configFactoryDefault();
+        driveMotor.setNeutralMode(NeutralMode.Brake);
+
+        // Set Up Angle Motor
+        WPI_TalonFX angleMotor = new WPI_TalonFX(angleID);
+        angleMotor.configFactoryDefault();
+        angleMotor.setNeutralMode(NeutralMode.Brake);
+        angleMotor.setInverted(true);
+
+        // Set Up Encoder
+        CANCoder canCoder = new CANCoder(encoderID);
+        CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
+        canCoderConfiguration.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+        canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees();
+        canCoderConfiguration.sensorDirection = true;
+        canCoder.configAllSettings(canCoderConfiguration);
+
+        // Build Module
+        return new SwerveModule(
+                driveMotor,
+                angleMotor,
+                () -> Rotation2d.fromDegrees(canCoder.getAbsolutePosition()),
+                () -> (driveMotor.getSelectedSensorVelocity() * 10d) * (Wheelbase.WHEEL_CIRCUMFERENCE / (2048d * Wheelbase.GEARING)), // m/s
+                ModuleConstants.DRIVE_CONTROLLER,
+                ModuleConstants.AZIMUTH_CONTROLLER
+                );
+
+    }
+
+    public SwerveModuleState[] getStates() {
+        return new SwerveModuleState[]{
+            modules[Modules.FRONT_LEFT.getIdx()].getState(),
+                modules[Modules.FRONT_RIGHT.getIdx()].getState(),
+                modules[Modules.BACK_LEFT.getIdx()].getState(),
+                modules[Modules.BACK_RIGHT.getIdx()].getState()
+        };
+    }
+
+    public SwerveKinematics getKinematics() {
+        return this.kinematics;
+    }
+
 }
+
