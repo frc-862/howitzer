@@ -62,6 +62,12 @@ public class SwerveDriveCommand extends CommandBase {
         // Set drive speed
         drivetrain.drive(driveSpeed);
 
+        SmartDashboard.putNumber("xSpeed", xSpeed);
+        SmartDashboard.putNumber("ySpeed", ySpeed);
+        SmartDashboard.putNumber("xInput", xInput);
+        SmartDashboard.putNumber("yInput", yInput);
+        SmartDashboard.putString("Heading", imu.getHeading().toString());
+
         //SmartDashboard.putString("Target Speed", driveSpeed.toString());
         //SmartDashboard.putString("Real Speed", drivetrain.getKinematics().forward(drivetrain.getStates()).toString());
         //SmartDashboard.putNumber("Max Linear Speed", DrivetrainConstants.MAX_SPEED);
