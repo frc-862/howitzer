@@ -25,7 +25,7 @@ public class SwerveDriveCommand extends CommandBase {
         addRequirements(drivetrain); // we do not add IMU as a requirement because it's use is read-only
         this.controller = controller;
         this.fieldCentric = fieldCentric;
-        this.filter = new JoystickFilter(0.05d, 0d, 1d, JoystickFilter.Mode.CUBED);
+        this.filter = new JoystickFilter(0.2d, 0d, 1d, JoystickFilter.Mode.CUBED);
     }
 
     @Override

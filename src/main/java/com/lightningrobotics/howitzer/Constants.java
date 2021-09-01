@@ -45,7 +45,7 @@ public final class Constants {
 
         // NOTE that in a perfect world, these two would be the same thing as we would be comfortable driving as fast as possible
         //public static final double MAX_SPEED = 15; //ft/sec //Units.feetToMeters(1); // Units.feetToMeters(5.5); // Max speed we WANT the robot to go
-        public static final double MAX_SPEED = 3;
+        public static final double MAX_SPEED = 6;
         public static final double REAL_MAX_SPEED = 17.2; //ft/sec //Units.feetToMeters(16.2); // Units.feetToMeters(15.0); // Max speed the robot CAN go
 
         // TODO these represent the speed of the whole robot when rotating? maybe

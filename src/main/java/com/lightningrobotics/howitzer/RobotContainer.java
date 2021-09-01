@@ -1,10 +1,12 @@
 package com.lightningrobotics.howitzer;
 
 import com.lightningrobotics.howitzer.Constants.JoystickConstants;
+import com.lightningrobotics.howitzer.Constants.ModuleConstants;
 import com.lightningrobotics.howitzer.Constants.RobotMap;
 import com.lightningrobotics.howitzer.commands.ModuleTest;
 import com.lightningrobotics.howitzer.commands.SwerveDriveCommand;
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
+import com.lightningrobotics.howitzer.subsystems.PIDFDashboardTuner;
 import com.lightningrobotics.howitzer.subsystems.Drivetrain.Modules;
 import com.lightningrobotics.howitzer.util.LightningIMU;
 
@@ -35,6 +37,9 @@ public class RobotContainer extends LightningContainer {
     protected void initializeDashboardCommands() {
         var tab = Shuffleboard.getTab("Commands");
         tab.add("Reset Heading", new InstantCommand(imu::reset, imu));
+
+        var tuneTab = Shuffleboard.getTab("Tune Tab");
+        tuneTab.add("Drive Tune", new PIDFDashboardTuner("Drive", ModuleConstants.DRIVE_CONTROLLER));
     }
 
     @Override
