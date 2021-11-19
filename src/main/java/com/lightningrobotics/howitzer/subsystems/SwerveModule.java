@@ -56,8 +56,8 @@ public class SwerveModule {
 
         // Set drive output
         final var drive = state.velocity / DrivetrainConstants.REAL_MAX_SPEED;
-        SmartDashboard.putNumber("Drive Coef", drive);
-        // final var drive = driveController.calculate(getVelocity(), state.velocity);
+        // SmartDashboard.putNumber("Drive Coef", drive);
+        //final var drive = driveController.calculate(getVelocity(), state.velocity);
         driveMotor.set(drive);
 
         // Set angle output

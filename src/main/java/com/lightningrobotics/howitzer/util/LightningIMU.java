@@ -100,7 +100,7 @@ public class LightningIMU extends SubsystemBase {
         }
         if(type == IMUType.PIGEON && ypr != null) {
             double heading = ypr[0];
-            double sign = Math.signum(heading);
+            double sign = -Math.signum(heading);
             double filteredRot = sign * (((Math.abs(heading) + 180) % 360) - 180);
             return Rotation2d.fromDegrees(filteredRot);
         }
