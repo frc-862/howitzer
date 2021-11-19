@@ -66,19 +66,8 @@ public class SwerveDriveCommand extends CommandBase {
         SmartDashboard.putNumber("ySpeed", ySpeed);
         SmartDashboard.putNumber("xInput", xInput);
         SmartDashboard.putNumber("yInput", yInput);
+        SmartDashboard.putNumber("rotInput", rotInput);
         SmartDashboard.putString("Heading", imu.getHeading().toString());
-
-        //SmartDashboard.putString("Target Speed", driveSpeed.toString());
-        //SmartDashboard.putString("Real Speed", drivetrain.getKinematics().forward(drivetrain.getStates()).toString());
-        //SmartDashboard.putNumber("Max Linear Speed", DrivetrainConstants.MAX_SPEED);
-        //SmartDashboard.putNumber("Max Angular Speed", DrivetrainConstants.MAX_ANGULAR_SPEED);
-        //SmartDashboard.putNumber("X Speed", xSpeed);
-        //SmartDashboard.putNumber("Y Speed", ySpeed);
-        //SmartDashboard.putNumber("ROT Speed", rotSpeed);
-        //SmartDashboard.putNumber("X Input", xInput);
-        //SmartDashboard.putNumber("Y Input", yInput);
-        //SmartDashboard.putNumber("ROT Input", rotInput);
-        //SmartDashboard.putNumber("Heading", imu.getHeading().getDegrees());
 
     }
 
