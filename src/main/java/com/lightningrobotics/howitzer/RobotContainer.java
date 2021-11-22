@@ -2,7 +2,6 @@ package com.lightningrobotics.howitzer;
 
 import com.lightningrobotics.howitzer.Constants.JoystickConstants;
 import com.lightningrobotics.howitzer.Constants.ModuleConstants;
-import com.lightningrobotics.howitzer.Constants.RobotMap;
 import com.lightningrobotics.howitzer.commands.SwerveDriveCommand;
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
 import com.lightningrobotics.howitzer.subsystems.PIDFDashboardTuner;
@@ -22,7 +21,7 @@ public class RobotContainer extends LightningContainer {
     private static final XboxController driver = new XboxController(JoystickConstants.DRIVER_CONTROLLER);
 
     // ROBOT COMPONENTS
-    private static final LightningIMU imu = LightningIMU.pigeon(RobotMap.PIGEON);
+    private static final LightningIMU imu = LightningIMU.navX(); //pigeon(RobotMap.PIGEON);
 
     // SUBSYSTEMS
     private static final Drivetrain drivetrain = new Drivetrain();

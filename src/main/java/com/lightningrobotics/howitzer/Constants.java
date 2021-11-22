@@ -46,7 +46,7 @@ public final class Constants {
         // NOTE that in a perfect world, these two would be the same thing as we would be comfortable driving as fast as possible
         //public static final double MAX_SPEED = 15; //ft/sec //Units.feetToMeters(1); // Units.feetToMeters(5.5); // Max speed we WANT the robot to go
         public static final double REAL_MAX_SPEED = 17.2; //ft/sec //Units.feetToMeters(16.2); // Units.feetToMeters(15.0); // Max speed the robot CAN go
-        public static final double MAX_SPEED = REAL_MAX_SPEED * 0.65d; // limit a bit for now
+        public static final double MAX_SPEED = REAL_MAX_SPEED * 0.75d; // limit a bit for now
         public static final double MAX_ANGULAR_SPEED = MAX_SPEED; //4 * Math.PI; // 2 rotation per second, pi rad/sec
         public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;
     }
