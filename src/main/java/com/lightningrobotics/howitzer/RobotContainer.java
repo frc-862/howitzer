@@ -1,48 +1,24 @@
 package com.lightningrobotics.howitzer;
 
-import com.lightningrobotics.howitzer.Constants.JoystickConstants;
-import com.lightningrobotics.howitzer.Constants.ModuleConstants;
-import com.lightningrobotics.howitzer.commands.SwerveDriveCommand;
+import com.lightningrobotics.common.LightningContainer;
+import com.lightningrobotics.common.command.drivetrain.swerve.SwerveDriveCommand;
+import com.lightningrobotics.common.subsystem.core.LightningIMU;
+import com.lightningrobotics.common.subsystem.drivetrain.LightningDrivetrain;
+import com.lightningrobotics.common.subsystem.drivetrain.swerve.SwerveDrivetrain;
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
-import com.lightningrobotics.howitzer.subsystems.PIDFDashboardTuner;
-import com.lightningrobotics.howitzer.util.LightningIMU;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.lightning.LightningConfig;
-import frc.lightning.LightningContainer;
-import frc.lightning.subsystems.LightningDrivetrain;
 
 public class RobotContainer extends LightningContainer {
 
-    // GAMEPADS
-    private static final XboxController driver = new XboxController(JoystickConstants.DRIVER_CONTROLLER);
+    private static final XboxController driver = new XboxController(0);
 
-    // ROBOT COMPONENTS
-    private static final LightningIMU imu = LightningIMU.navX(); //pigeon(RobotMap.PIGEON);
+    private static final LightningIMU imu = LightningIMU.navX();
 
-    // SUBSYSTEMS
-    private static final Drivetrain drivetrain = new Drivetrain();
-
-    @Override
-    protected void configureDefaultCommands() {
-        drivetrain.setDefaultCommand(new SwerveDriveCommand(drivetrain, imu, driver, true));
-    }
-
-    @Override
-    protected void initializeDashboardCommands() {
-        var tab = Shuffleboard.getTab("Commands");
-        tab.add("Reset Heading", new InstantCommand(imu::reset, imu));
-        tab.addNumber("Heading", () -> imu.getHeading().getDegrees());
-
-        var tuneTab = Shuffleboard.getTab("Tune Tab");
-        tuneTab.add("Drive Tune", new PIDFDashboardTuner("Drive", ModuleConstants.DRIVE_CONTROLLER));
-    }
-
-    @Override
-    protected void configureAutonomousCommands() { }
+    private static final SwerveDrivetrain drivetrain = new Drivetrain();
 
     @Override
     protected void configureButtonBindings() {
@@ -53,17 +29,35 @@ public class RobotContainer extends LightningContainer {
     protected void configureSystemTests() { }
 
     @Override
-    public LightningConfig getConfig() {
-        return null;
-    }
-
-    @Override
-    public LightningDrivetrain getDrivetrain() {
-        return null;
+    protected void configureDefaultCommands() {
+        drivetrain.setDefaultCommand(new SwerveDriveCommand(drivetrain, imu, driver, true));
     }
 
     @Override
     protected void releaseDefaultCommands() { }
 
-}
+    @Override
+    protected void initializeDashboardCommands() {
+        var tab = Shuffleboard.getTab("Drivetrain");
+        tab.addNumber("Heading", () -> imu.getHeading().getDegrees());
+        tab.add("Reset Heading", new InstantCommand(imu::reset, imu));
+    }
 
+    @Override
+    protected void configureAutonomousPaths() { }
+
+    @Override
+    protected void configureAutonomousCommands() { }
+
+    @Override
+    protected void configureFaultCodes() { }
+
+    @Override
+    protected void configureFaultMonitors() { }
+
+    @Override
+    public LightningDrivetrain getDrivetrain() {
+        return drivetrain;
+    }
+
+}
