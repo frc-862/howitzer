@@ -4,7 +4,7 @@
 
 package com.lightningrobotics.howitzer;
 
-import frc.lightning.LightningRobot;
+import com.lightningrobotics.common.LightningRobot;
 
 public class Robot extends LightningRobot {
 

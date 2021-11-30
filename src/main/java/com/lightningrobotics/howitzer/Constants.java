@@ -1,8 +1,6 @@
 package com.lightningrobotics.howitzer;
 
-import com.lightningrobotics.howitzer.controller.PIDFController;
-
-import edu.wpi.first.wpilibj.util.Units;
+import com.lightningrobotics.common.controller.PIDFController;
 
 public final class Constants {
 
@@ -38,6 +36,11 @@ public final class Constants {
 
         public static final double TICKS_PER_REV_CANCODER = 4096; // CANCoder has 4096 ticks/rotation
 
+        public static final double FRONT_LEFT_OFFSET = -95.09765625d;
+        public static final double FRONT_RIGHT_OFFSET = -12.744140625d;
+        public static final double BACK_LEFT_OFFSET = 30.673828125d;
+        public static final double BACK_RIGHT_OFFSET = 119.00390625d;
+
     }
 
     public static class DrivetrainConstants {
@@ -49,14 +52,15 @@ public final class Constants {
         public static final double MAX_SPEED = REAL_MAX_SPEED * 0.75d; // limit a bit for now
         public static final double MAX_ANGULAR_SPEED = MAX_SPEED; //4 * Math.PI; // 2 rotation per second, pi rad/sec
         public static final double MAX_ANGULAR_ACCEL = 2 * Math.PI;
+        public static final double MAX_ACCEL = 10d;
     }
 
     public static class Wheelbase {
-        public static final double W = Units.inchesToMeters(22.5); // Width
-        public static final double L = Units.inchesToMeters(22.5); // Length
-        public static final double R = Math.sqrt((W * W) + (L * L)); // Diagonal
-        public static final double WHEEL_CIRCUMFERENCE = (4d / 12d) * Math.PI; //Units.inchesToMeters(4d) * Math.PI;
+        public static final double W = 22.5/12d; //ft
+        public static final double L = 22.5/12d; //ft
+        public static final double WHEEL_CIRCUMFERENCE = (4d / 12d) * Math.PI; //ft
         public static final double GEARING = 6.86d;
+        public static final double TICKS_PER_REV_TALON_FX = 2048d;
     }
 
     public static class JoystickConstants {
