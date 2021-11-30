@@ -8,6 +8,9 @@ import com.lightningrobotics.common.subsystem.drivetrain.swerve.SwerveDrivetrain
 import com.lightningrobotics.howitzer.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer extends LightningContainer {
 
@@ -18,7 +21,9 @@ public class RobotContainer extends LightningContainer {
     private static final SwerveDrivetrain drivetrain = new Drivetrain();
 
     @Override
-    protected void configureButtonBindings() { }
+    protected void configureButtonBindings() {
+        (new JoystickButton(driver, 1)).whenPressed(new InstantCommand(imu::reset, imu));
+    }
 
     @Override
     protected void configureSystemTests() { }
@@ -33,6 +38,9 @@ public class RobotContainer extends LightningContainer {
 
     @Override
     protected void initializeDashboardCommands() {
+        var tab = Shuffleboard.getTab("Drivetrain");
+        tab.addNumber("Heading", () -> imu.getHeading().getDegrees());
+        tab.add("Reset Heading", new InstantCommand(imu::reset, imu));
     }
 
     @Override

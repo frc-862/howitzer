@@ -35,22 +35,22 @@ public class Drivetrain extends SwerveDrivetrain {
                         RobotMap.FRONT_LEFT_DRIVE_MOTOR, 
                         RobotMap.FRONT_LEFT_ANGLE_MOTOR,
                         RobotMap.FRONT_LEFT_CANCODER, 
-                        Rotation2d.fromDegrees(ModuleConstants.FRONT_LEFT_OFFSET)),
+                        ModuleConstants.FRONT_LEFT_OFFSET),
                 makeModule(Modules.FRONT_RIGHT, 
                         RobotMap.FRONT_RIGHT_DRIVE_MOTOR, 
                         RobotMap.FRONT_RIGHT_ANGLE_MOTOR,
                         RobotMap.FRONT_RIGHT_CANCODER, 
-                        Rotation2d.fromDegrees(ModuleConstants.FRONT_RIGHT_OFFSET)),
+                        ModuleConstants.FRONT_RIGHT_OFFSET),
                 makeModule(Modules.REAR_LEFT, 
                         RobotMap.BACK_LEFT_DRIVE_MOTOR, 
                         RobotMap.BACK_LEFT_ANGLE_MOTOR,
                         RobotMap.BACK_LEFT_CANCODER, 
-                        Rotation2d.fromDegrees(ModuleConstants.BACK_LEFT_OFFSET)),
+                        ModuleConstants.BACK_LEFT_OFFSET),
                 makeModule(Modules.REAR_RIGHT, 
                         RobotMap.BACK_RIGHT_DRIVE_MOTOR, 
                         RobotMap.BACK_RIGHT_ANGLE_MOTOR,
                         RobotMap.BACK_RIGHT_CANCODER, 
-                        Rotation2d.fromDegrees(ModuleConstants.BACK_RIGHT_OFFSET))
+                        ModuleConstants.BACK_RIGHT_OFFSET)
         });
     }
 
