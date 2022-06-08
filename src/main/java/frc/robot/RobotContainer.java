@@ -1,11 +1,11 @@
-package com.lightningrobotics.howitzer;
+package frc.robot;
 
 import com.lightningrobotics.common.LightningContainer;
 import com.lightningrobotics.common.command.drivetrain.swerve.SwerveDriveCommand;
 import com.lightningrobotics.common.subsystem.core.LightningIMU;
 import com.lightningrobotics.common.subsystem.drivetrain.LightningDrivetrain;
 import com.lightningrobotics.common.subsystem.drivetrain.swerve.SwerveDrivetrain;
-import com.lightningrobotics.howitzer.subsystems.Drivetrain;
+import frc.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -42,9 +42,6 @@ public class RobotContainer extends LightningContainer {
         tab.addNumber("Heading", () -> imu.getHeading().getDegrees());
         tab.add("Reset Heading", new InstantCommand(imu::reset, imu));
     }
-
-    @Override
-    protected void configureAutonomousPaths() { }
 
     @Override
     protected void configureAutonomousCommands() { }
